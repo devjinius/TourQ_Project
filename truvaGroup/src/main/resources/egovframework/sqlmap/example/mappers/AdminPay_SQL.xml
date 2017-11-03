@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.adminPay.service.impl.AdminPayMapper">
+	
+	<!-- 메인 조회 -->
+	<select id="jqgridAdminPayList" parameterType="adminPayVO" resultType="egovMap">
+		SELECT PAY_NUMBER,
+    		PAY_TYPE,
+    		PAY_IMG,
+    		PAY_NAME,
+    		BANK_NUMBER,
+    		PAY_USEYN,
+    		PAY_SORTNUM
+		FROM PAY
+		WHERE 1=1
+		<if test="surchSelect !=null and surchSelect !=''">
+			AND PAY_TYPE = #{surchSelect}
+		</if>
+		ORDER BY PAY_SORTNUM ASC
+	</select>
+	
+	<!-- 페이징 -->
+	<select id="adminPayCntList" parameterType="adminPayVO" resultType="egovMap">
+		SELECT count(*) TOTAL_CNT
+			, CEIL (count(*) / #{rows}) TOTAL_PAGE
+			FROM PAY
+		WHERE 1=1
+	</select>
+	
+	
+	<insert id="insertAdminPay" parameterType="map">
+		<selectKey resultType="String" keyProperty="payNumber" order="BEFORE">
+		SELECT NVL(MAX(SEQ),0)+1 AS payNumber
+		FROM PAY
+		</selectKey>
+		INSERT INTO PAY
+		(PAY_NUMBER,
+			PAY_TYPE,
+			PAY_IMG,
+			PAY_NAME,
+			BANK_NUMBER,
+			PAY_USEYN,
+			PAY_SORTNUM,
+			SEQ)
+		VALUES
+		('PAYNUM'||TO_CHAR(LPAD(#{payNumber}, 3, 0)),
+		#{payType},
+		#{payImg},
+		#{payName},
+		#{bankNumber},
+		'N',
+		#{paySortnum},
+		#{payNumber})
+	</insert>
+	
+	<update id="adminPayServiceUpdate" parameterType="map">
+		UPDATE PAY
+    	SET PAY_USEYN = #{payUseyn}
+		WHERE PAY_NUMBER = #{payNumber,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="updateAdminPay" parameterType="map">
+		UPDATE PAY
+		SET PAY_NUMBER = #{payNumber},
+			PAY_TYPE = #{payType},
+			PAY_IMG = #{payImg},
+			PAY_NAME = #{payName},
+			BANK_NUMBER = #{bankNumber},
+			PAY_SORTNUM  = #{paySortnum}
+		WHERE PAY_NUMBER = #{payNumber}
+	</update>
+
+</mapper>

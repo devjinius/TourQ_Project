@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.review.service.impl.ReviewMapper">
+	
+	<select id="beforeList" parameterType="String" resultType="egovMap">
+		SELECT DISTINCT p.COURSE_NUMBER, c.COURSE_TITLE, c.THEME_NUMBER, o.OR_NUMBER, c.COURSE_SUBTITLE, p.DEPARTURE_TIME
+   			FROM ORDER_T o, RESERVATION r, PRODUCT p, COURSE c
+    		WHERE o.RES_NUMBER = r.RES_NUMBER
+        AND r.PRODUCT_NUMBER = p.PRODUCT_NUMBER
+        AND  p.COURSE_NUMBER = c.COURSE_NUMBER
+        AND o.MEMBER_NUMBER = #{_parameter} 
+        AND o.OR_CHECK_REVIEW = 'N'
+	</select>
+	
+	<select id="themeList" parameterType="String" resultType="egovMap">
+		SELECT *
+		FROM THEME
+		ORDER BY SEQ
+	</select>	
+	
+	<select id="reviewList" parameterType="String" resultType="egovMap">
+		SELECT REVIEW_TITLE,
+				REVIEW_NUMBER,
+				THEME_NUMBER
+		FROM REVIEW
+	</select>
+	
+	<select id="selectReview" parameterType="String" resultType="egovMap">
+		SELECT REVIEW_TITLE,
+				REVIEW_CONTENTS,
+				REVIEW_DATE,
+				REVIEW_RANK,
+		        MEMBER.MEMBER_NAME,
+		        COURSE.COURSE_TITLE,
+		        COURSE.COURSE_SUBTITLE
+				FROM REVIEW, MEMBER, COURSE
+		    WHERE REVIEW.MEMBER_NUMBER = MEMBER.MEMBER_NUMBER
+		    AND REVIEW.COURSE_NUMBER = COURSE.COURSE_NUMBER
+		    AND REVIEW.REVIEW_NUMBER = #{_parameter}
+	</select>
+	
+	<select id="totCnt" resultType="egovMap">
+		SELECT count(*) totCnt FROM REVIEW
+	</select>
+
+	<select id="themeCnt" resultType="egovMap">
+		SELECT THEME_NUMBER, count(*) cnt
+		FROM REVIEW
+		GROUP BY THEME_NUMBER
+		ORDER BY THEME_NUMBER
+	</select>
+		
+	<insert id="insertReview" parameterType="Map">
+		<selectKey resultType="String" keyProperty="reviewNumber" order="BEFORE">
+			SELECT NVL(MAX(REVIEW_NUMBER),0)+1 AS reviewNumber
+			FROM REVIEW
+		</selectKey>
+		INSERT INTO REVIEW
+			(REVIEW_TITLE,
+			REVIEW_CONTENTS,
+			REVIEW_RANK,
+			REVIEW_DATE,
+			MEMBER_NUMBER,
+			REVIEW_NUMBER,
+			COURSE_NUMBER,
+			THEME_NUMBER
+			)
+		VALUES
+			(#{title},
+			#{contents},
+			#{rank},
+			TO_CHAR(SYSDATE, 'YYYYMMDD'),
+			#{memberNumber},
+			#{reviewNumber},
+			#{courseNumber},
+			#{themeNumber}
+			)
+	</insert>
+	
+	<update id="updateOrderYN" parameterType="String">
+	UPDATE ORDER_T SET 
+		OR_CHECK_REVIEW = 'Y'
+		WHERE OR_NUMBER = #{_parameter}
+	</update>
+	
+	<select id="selectReviewNumber" resultType="egovMap">
+	SELECT NVL(MAX(REVIEW_NUMBER),0) AS reviewNumber
+	FROM REVIEW
+	</select>
+</mapper>

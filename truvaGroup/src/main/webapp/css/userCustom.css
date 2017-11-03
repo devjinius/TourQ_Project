@@ -1,0 +1,144 @@
+/* 상세정보 p태그 */
+.detail p {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.detail h3 {
+	margin-top: 10px;
+	margin-bottom: 20px;
+}
+
+/* 코스보기 아이콘 */
+.courseicon {
+	margin-left: 10px;
+}
+.hearticon {
+	color: #e4745a;
+}
+.carticon {
+	color: #e4745a;	
+}
+
+/* 코스 컬럼 추가 */
+.col-custom-1 {
+	width: 550px;
+	height: 1000px;
+}
+
+/* blog 사진 */
+.img-custom-1 {
+	width: 687px;
+	height: 380px;
+}
+
+/* about p태그 */
+.blog-item p{
+	margin-top: 15px;
+}
+
+/* small custom*/
+.small-custom-1 {
+	margin-bottom: 10px;
+}
+
+/* story 하트 크기 */
+.blog-heart {
+	text-align: center;
+	font-size: 30px;
+	color: red;
+}
+
+/* 기본 여백 css 공통 */
+.pd-top-10 {
+	padding-top: 10px;
+}
+.pd-top-20 {
+	padding-top: 20px;
+}
+.pd-top-30 {
+	padding-top: 30px;
+}
+.pd-top-40 {
+	padding-top: 40px;
+}
+.pd-top-50 {
+	padding-top: 50px;
+}
+
+/* 정렬 */
+.align-center {
+	float: none;
+	margin: 0 auto;
+}
+.align-right {
+	float: right;
+}
+/* float 해제 */
+.clear {
+	*zoom: 1;
+}
+.clear:after {
+	content: "";
+	display: block;
+	clear: both;
+}
+
+/* 안보이게 */
+.hidden {
+	display: hidden;
+}
+
+/* bg 없는 모달창 */
+.white-modal {
+	position:fixed;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	z-index: 1100;
+}
+.white-modal > .modal-box {
+	position: relative;
+	margin: 0 auto;
+	float: none;
+	background-color: #f5f5f5;
+	height: 510px;
+	top: 50%;
+	margin-top: -200px;
+	padding: 20px 15px;
+	border: 1px solid #ededed;
+}
+.form-control.myQuestion-title {
+	margin-bottom: 10px !important;
+	line-height: 31px;
+}
+.modal-contents > .form-group > .modal-anser-text,
+.modal-contents > .form-group > .modal-contents-text {
+	overflow: hidden;
+	overflow-y: auto;
+	white-space: pre-line;
+}
+.modal-contents > .form-group > .modal-contents-text {
+	height: 160px;
+}
+.modal-contents > .form-group > .modal-anser-text {
+	height: 140px;
+	color: #183356;
+}
+.modal-close {
+	padding: 0 15px 7px 15px;
+}
+.modal-close > span {
+	float: left;
+	font-size: 15px;
+	color: #282828;
+}
+.post-title{
+	color: #ef5735;
+	font-size: 26px;
+}
+
+.post-info {
+	float: right;
+}

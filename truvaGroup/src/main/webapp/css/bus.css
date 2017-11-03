@@ -1,0 +1,89 @@
+/* 버스종류 */
+.bus1 {
+	background-image: url("../images/uploads/bus.jpg");
+	width: 506px;
+	height: 145px;
+	padding-top: 5px;
+    padding-left: 70px;
+    padding-right: 110px;
+}
+
+/* 버스 좌석표 */
+.bus-seat {
+	position: relative;
+	width: 27px;
+	height: 30px;
+	background-color: #A7DDFF;
+	margin-bottom: 3px;
+}
+.bus-seat.seat-soldout {
+	background-color: #B4B4B4;
+}
+.bus-seat.seat-select {
+	background-color: #DD2020;
+}
+.bus-seat > .bus-seat-mask {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	background-image: url("../images/uploads/bus-seat.png");
+}
+.bus-seat-area {
+	position: relative;
+    margin: 0 auto;
+}
+.bus-seat .seatId {
+	display: none;
+}
+.bus-seat:hover .seatId {
+	display: inline-block;
+	font-size: 10px;
+    position: absolute;
+    background-color: rgba(83, 83, 83, 0.75);
+    font-weight: bold;
+    padding: 0;
+    color: #fff;
+    bottom: -2px;
+    padding: 0px 2px;
+    right: -15px;
+}
+
+/* 어드민 */
+.admin-bus {
+	position: relative;
+	margin: 0 auto;
+}
+#target > .bus-seat {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+}
+.admin-bus .bus-seat-admin {
+	display: inline-block;
+	float: left;
+}
+.btn-default.seat-btn:focus {
+	color: #333;
+	background-color: #fff;
+}
+.seat-btn {
+	display: block;
+	text-align: center;
+	padding: 5px;
+}
+.seat-btn .bus-seat {
+	margin: 5px auto;
+}
+.seatRow {
+	width: 100%;
+	height: 30px;
+	margin-bottom: 4px;
+	background-color: rgba(0, 0, 0, 0.1);
+	border-bottom: 1px solid #fff;
+	position:relative;
+}
+.seatRow.active {
+	background-color: rgba(36, 212, 254, 0.1);
+}

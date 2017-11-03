@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.adminCustomer.service.impl.AdminCustomerMapper">
+
+	<select id="selectJqNoticeList"  parameterType ="adCustomJqgridVo" resultType="egovMap">
+    SELECT b.* FROM
+	  (SELECT a.*,
+	        FLOOR( (a.rnum - 1) / #{rows} + 1) pageNumber
+	  FROM (SELECT aa.*,
+	        ROWNUM rnum
+	      	FROM (SELECT BOARD_NUMBER,
+					BOARD_TITLE,
+					BOARD_CONTENT,
+					BOARD_DATE,
+					SEQ,
+					COUNT
+		          FROM BOARD
+		          WHERE 1=1
+		          <if test="searchSelect.equals('제목') and searchText != '' and searchText != null">
+					  AND BOARD_TITLE LIKE  '%' || #{searchText} || '%'
+				  </if>
+		          <if test="searchSelect.equals('내용') and searchText != '' and searchText != null">
+					  AND BOARD_CONTENT LIKE  '%' || #{searchText} || '%'
+				  </if>
+		          <if test="searchSelect.equals('제내') and searchText != '' and searchText != null">
+					  AND BOARD_CONTENT||BOARD_TITLE LIKE  '%' || #{searchText} || '%'
+				  </if>
+		          ORDER BY SEQ ASC
+		          ) aa
+	      ORDER BY rnum ASC) a
+	  ) b
+	WHERE pageNumber = #{page}
+	ORDER BY b.rnum ASC
+	</select>
+	
+	<select id="selectJqNoticeListCnt" parameterType="adCustomJqgridVo" resultType="egovMap">
+	SELECT  count(*) totalTotCnt
+             , CEIL(count(*) / #{rows}) totalPage
+        FROM  BOARD
+        WHERE 1=1
+        <if test="searchSelect.equals('제목') and searchText != '' and searchText != null">
+			AND BOARD_TITLE LIKE  '%' || #{searchText} || '%'
+		</if>
+        <if test="searchSelect.equals('내용') and searchText != '' and searchText != null">
+			AND BOARD_CONTENT LIKE  '%' || #{searchText} || '%'
+		</if>
+        <if test="searchSelect.equals('제내') and searchText != '' and searchText != null">
+			AND BOARD_CONTENT||BOARD_TITLE LIKE  '%' || #{searchText} || '%'
+		</if>
+     ORDER BY  SEQ ASC
+    </select>
+    
+	<select id="selectJqCouponList"  parameterType ="adCustomJqgridVo" resultType="egovMap">
+    SELECT b.* FROM
+	  (SELECT a.*,
+	        FLOOR( (a.rnum - 1) / #{rows} + 1) pageNumber
+	  FROM (SELECT aa.*,
+	        ROWNUM rnum
+	      	FROM (SELECT COUPON_NUMBER,
+						COUPON_NAME,
+						COUPON_PUB_NUMBER,
+						COUPON_DATE,
+						COUPON_DISCOUNT,
+						COUPON_PUB_COUNT,
+						COUPON_YN
+		          FROM COUPON
+		          WHERE 1=1
+		          ORDER BY COUPON_NUMBER ASC
+		          ) aa
+	      ORDER BY rnum ASC) a
+	  ) b
+	WHERE pageNumber = #{page}
+	ORDER BY b.rnum ASC
+	</select>
+	
+	<select id="selectJqCouponListCnt" parameterType="adCustomJqgridVo" resultType="egovMap">
+	SELECT  count(*) totalTotCnt
+             , CEIL(count(*) / #{rows}) totalPage
+        FROM  COUPON
+        WHERE 1=1
+     ORDER BY COUPON_NUMBER ASC
+    </select>
+
+	<select id ="noticeDetail" parameterType="String" resultType="egovMap">
+		 SELECT  * 
+         FROM  BOARD
+         WHERE 1=1
+         <if test='_parameter != null and _parameter != ""'>
+			AND BOARD_NUMBER = #{_parameter}
+		</if>
+	</select>
+	
+	<select id ="faqDetail" parameterType="String" resultType="egovMap">
+		 SELECT  * 
+         FROM  FAQ
+         WHERE 1=1
+         <if test='_parameter != null and _parameter != ""'>
+			AND FAQ_NUMBER = #{_parameter}
+		</if>
+	</select>
+	
+	<select id ="selectadminCouponDetail" resultType="egovMap">
+		 SELECT  * 
+         FROM  COUPON
+         WHERE 1=1
+         <if test='_parameter != null and _parameter != ""'>
+			AND COUPON_NUMBER = #{_parameter}
+		</if>
+	</select>
+	
+	<select id ="selectadCouponList" resultType="egovMap">
+		 SELECT  COUPON_NUMBER
+		         ,COUPON_NAME
+		         ,COUPON_PUB_NUMBER
+		         ,COUPON_CODE
+		         ,TO_CHAR(SYSDATE, 'YYYY-MM-DD') COUPON_DATE
+				 ,TO_CHAR(SYSDATE, 'YYYY-MM-DD') COUPON_EXPIRE_DATE
+		         ,COUPON_DISCOUNT
+		         ,COUPON_PUB_COUNT
+         FROM  COUPON
+         ORDER BY COUPON_NUMBER
+        
+	</select>
+	
+	<update id="updateNotice" parameterType="Map">
+	UPDATE BOARD SET 
+		BOARD_TITLE = #{title},
+		BOARD_CONTENT = #{content}
+		WHERE BOARD_NUMBER = #{noticeNumber}
+	</update>
+	
+	<update id="updateFaq" parameterType="Map">
+	UPDATE FAQ SET 
+		FAQ_TITLE = #{title},
+		FAQ_CONTENTS = #{content},
+    	FAQ_TYPE = #{faqType}
+		WHERE FAQ_NUMBER = #{faqNumber}
+	</update>
+
+	<update id="updateAnswer" parameterType="Map">
+	UPDATE ANSWER SET 
+		ANSWER_TITLE = #{title},
+		ANSWER_CONTENT = #{content},
+		ANSWER_DATE = SYSDATE
+		WHERE ASK_NUMBER = #{askNumber}
+	</update>
+	
+	<update id="updateAskYn" parameterType="Map">
+	UPDATE ASK SET 
+		ASK_ANSWER_YN = 'Y'
+		WHERE SEQ = #{askNumber}
+	</update>
+	
+	<delete id="deleteNotice" parameterType="String">
+	DELETE FROM BOARD WHERE SEQ = #{_parameter}
+	</delete>
+
+	<delete id="deleteFaq" parameterType="String">
+	DELETE FROM FAQ WHERE FAQ_NUMBER = #{_parameter}
+	</delete>
+	
+	<insert id="insertNotice" parameterType="Map">
+		<selectKey resultType="String" keyProperty="seq" order="BEFORE">
+			SELECT NVL(MAX(SEQ),0)+1 AS seq
+			FROM BOARD
+		</selectKey>
+		INSERT INTO BOARD
+				(BOARD_NUMBER,
+				BOARD_TITLE,
+				BOARD_CONTENT,
+				BOARD_DATE,
+				SEQ
+				)
+			VALUES
+				(#{seq},
+				#{title},
+				#{content},
+				SYSDATE,
+				#{seq}
+				)
+	</insert>
+	
+	<insert id="insertFaq" parameterType="Map">
+		<selectKey resultType="String" keyProperty="number1" order="BEFORE">
+			SELECT NVL(MAX(FAQ_NUMBER),0)+1 AS number1
+			FROM FAQ
+		</selectKey>
+		INSERT INTO FAQ
+				(FAQ_NUMBER,
+				FAQ_TITLE,
+				FAQ_CONTENTS,
+				FAQ_DATE,
+				FAQ_TYPE
+				)
+			VALUES
+				(#{number1},
+				#{title},
+				#{content},
+				SYSDATE,
+				#{faqType}
+				)
+	</insert>
+	
+	<insert id="insertAnswer" parameterType="Map">
+		<selectKey resultType="String" keyProperty="number1" order="BEFORE">
+			SELECT NVL(MAX(ANSWER_NUMBER),0)+1 AS number1
+			FROM ANSWER
+		</selectKey>
+		INSERT INTO ANSWER
+				(ANSWER_NUMBER,
+				ANSWER_CONTENT,
+				ANSWER_DATE,
+				ASK_NUMBER,
+				ANSWER_TITLE
+				)
+			VALUES
+				(#{number1},
+				#{content},
+				SYSDATE,
+				#{askNumber},
+				#{title}
+				)
+	</insert>
+	
+	<select id="selectJqFaqList"  parameterType ="adCustomJqgridVo" resultType="egovMap">
+    SELECT b.* FROM
+	  (SELECT a.*,
+	        FLOOR( (a.rnum - 1) / #{rows} + 1) pageNumber
+	  FROM (SELECT aa.*,
+	        ROWNUM rnum
+	      	FROM (SELECT FAQ_NUMBER,
+					FAQ_TITLE,
+					FAQ_DATE,
+					FAQ_TYPE
+				  FROM FAQ
+				  WHERE 1=1
+		          <if test="searchSelect.equals('제목') and searchText != '' and searchText != null">
+					  AND FAQ_TITLE LIKE  '%' || #{searchText} || '%'
+				  </if>
+		          <if test="searchSelect.equals('내용') and searchText != '' and searchText != null">
+					  AND FAQ_CONTENTS LIKE  '%' || #{searchText} || '%'
+				  </if>
+		          <if test="searchSelect.equals('제내') and searchText != '' and searchText != null">
+					  AND FAQ_CONTENTS||FAQ_TITLE LIKE  '%' || #{searchText} || '%'
+				  </if>
+				  <if test="searchSelect.equals('타입') and searchText != '' and searchText != null">
+					  AND FAQ_TYPE LIKE  '%' || #{searchText} || '%'
+				  </if>
+		          ORDER BY FAQ_NUMBER ASC
+		          ) aa
+	      ORDER BY rnum ASC) a
+	  ) b
+	WHERE pageNumber = #{page}
+	ORDER BY b.rnum ASC
+	</select>
+	
+	<select id="selectJqFaqListCnt" parameterType="adCustomJqgridVo" resultType="egovMap">
+	SELECT  count(*) totalTotCnt
+             , CEIL(count(*) / #{rows}) totalPage
+        FROM  FAQ
+        WHERE 1=1
+		          <if test="searchSelect.equals('제목') and searchText != '' and searchText != null">
+					  AND FAQ_TITLE LIKE  '%' || #{searchText} || '%'
+				  </if>
+		          <if test="searchSelect.equals('내용') and searchText != '' and searchText != null">
+					  AND FAQ_CONTENTS LIKE  '%' || #{searchText} || '%'
+				  </if>
+		          <if test="searchSelect.equals('제내') and searchText != '' and searchText != null">
+					  AND FAQ_CONTENTS||FAQ_TITLE LIKE  '%' || #{searchText} || '%'
+				  </if>
+				  <if test="searchSelect.equals('타입') and searchText != '' and searchText != null">
+					  AND FAQ_TYPE LIKE  '%' || #{searchText} || '%'
+				  </if>
+     ORDER BY  FAQ_NUMBER ASC
+    </select>
+    
+    <select id="selectJqAskList"  parameterType ="adCustomJqgridVo" resultType="egovMap">
+    SELECT b.* FROM
+	  (SELECT a.*,
+	        FLOOR( (a.rnum - 1) / #{rows} + 1) pageNumber
+	  FROM (SELECT aa.*,
+	        ROWNUM rnum
+	      	FROM (SELECT x.*,
+				        y.MEMBER_ID
+				FROM ASK x, MEMBER y
+				WHERE x.MEMBER_NUMBER = y.MEMBER_NUMBER
+				<if test="searchSelect.equals('제목') and searchText != '' and searchText != null">
+					AND x.ASK_TITLE LIKE  '%' || #{searchText} || '%'
+				</if>
+		        <if test="searchSelect.equals('내용') and searchText != '' and searchText != null">
+					AND x.ASK_CONTENT LIKE  '%' || #{searchText} || '%'
+				</if>
+		        <if test="searchSelect.equals('제내') and searchText != '' and searchText != null">
+					AND x.ASK_CONTENT||x.ASK_TITLE LIKE  '%' || #{searchText} || '%'
+				</if>
+	 		    <if test="searchSelect.equals('아이디') and searchText != '' and searchText != null">
+		   	    	AND y.MEMBER_ID LIKE  '%' || #{searchText} || '%'
+				</if>
+		        <if test="memberNumber != '' and memberNumber != null">
+					AND x.MEMBER_NUMBER = #{memberNumber}
+				</if>
+				ORDER BY x.SEQ
+		          ) aa
+	      ORDER BY rnum ASC) a
+	  ) b
+	WHERE pageNumber = #{page}
+	ORDER BY b.rnum ASC
+	</select>
+	
+	<select id="selectJqAskListCnt" parameterType="adCustomJqgridVo" resultType="egovMap">
+	SELECT  count(*) totalTotCnt
+             , CEIL(count(*) / #{rows}) totalPage
+        FROM ASK x, MEMBER y
+		WHERE x.MEMBER_NUMBER = y.MEMBER_NUMBER
+        <if test="searchSelect.equals('제목') and searchText != '' and searchText != null">
+			AND x.ASK_TITLE LIKE  '%' || #{searchText} || '%'
+		</if>
+        <if test="searchSelect.equals('내용') and searchText != '' and searchText != null">
+			AND x.ASK_CONTENT LIKE  '%' || #{searchText} || '%'
+		</if>
+        <if test="searchSelect.equals('제내') and searchText != '' and searchText != null">
+			AND x.ASK_CONTENT||x.ASK_TITLE LIKE  '%' || #{searchText} || '%'
+		</if>
+ 		    <if test="searchSelect.equals('아이디') and searchText != '' and searchText != null">
+   	    	AND y.MEMBER_ID LIKE  '%' || #{searchText} || '%'
+		</if>
+        <if test="memberNumber != '' and memberNumber != null">
+			AND x.MEMBER_NUMBER = #{memberNumber}
+		</if>
+     ORDER BY x.SEQ ASC
+    </select>
+    
+    <select id="memberInfo" parameterType="String" resultType="egovMap">
+	SELECT MEMBER_NUMBER,
+			MEMBER_ID,
+			MEMBER_MAIL,
+			MEMBER_NAME,
+			MEMBER_HPF,
+			MEMBER_HPM,
+			MEMBER_HPL,
+			MEMBER_REGDATE 
+	FROM MEMBER
+	WHERE MEMBER_NUMBER = #{_parameter}
+    </select>
+    
+    <select id="askInfo" parameterType="String" resultType="egovMap">
+    SELECT *
+    FROM ASK
+    WHERE ASK_NUMBER = #{_parameter}
+    </select>
+    
+    <select id="answerInfo" parameterType="String" resultType="egovMap">
+    SELECT *
+    FROM ANSWER
+    WHERE ASK_NUMBER = #{_parameter}
+    </select>
+    
+    <insert id="insertJqgridCoupon" parameterType="Map">
+		<selectKey resultType="String" keyProperty="number1" order="BEFORE">
+			SELECT NVL(MAX(COUPON_NUMBER),0)+1 AS number1
+			FROM COUPON
+		</selectKey>
+		INSERT INTO COUPON
+				(COUPON_NUMBER,
+				COUPON_NAME,
+				COUPON_PUB_NUMBER,
+				COUPON_DATE,
+				COUPON_DISCOUNT,
+				COUPON_PUB_COUNT,
+				COUPON_YN
+				)
+			VALUES
+				(#{number1},
+				#{couponName},
+				DBMS_RANDOM.STRING('X', 12),
+				SYSDATE,
+				#{couponDiscount},
+				#{couponPubCount},
+				#{couponYn}
+				)
+	</insert>
+	
+	<update id="updateJqgridCoupon" parameterType="Map">
+	UPDATE COUPON SET 
+		COUPON_NAME  = #{couponName},
+		COUPON_DISCOUNT = #{couponDiscount},
+		COUPON_PUB_COUNT = #{couponPubCount},
+		COUPON_YN = #{couponYn}
+		WHERE COUPON_NUMBER = #{couponNumber}
+	</update>
+</mapper>

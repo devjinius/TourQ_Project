@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.adminStory.service.impl.AdminStoryMapper">
+	
+	<insert id="insertStory" parameterType="Map">
+		<selectKey resultType="String" keyProperty="storyNumber" order="BEFORE">
+			SELECT NVL(MAX(SEQ),0)+1 AS storyNumber
+			FROM STORY
+		</selectKey>
+			INSERT INTO STORY
+				(STORY_NUMBER,
+					STORY_TITLE,
+					STORY_SUBTITLE,
+					STORY_CONTENTS,
+					STORY_COUNT,
+					STORY_LIKE,
+					STORY_DATE,
+					SEQ
+				)
+			VALUES
+				(#{storyNumber},
+				#{title},
+				#{subtitle},
+				#{contents},
+				0,
+				0,
+				SYSDATE,
+				#{storyNumber}
+				)
+	</insert>
+	
+	<update id="updateStory" parameterType="Map">
+		UPDATE STORY 
+		SET STORY_TITLE = #{title},
+			STORY_SUBTITLE = #{subtitle},
+			STORY_CONTENTS = #{contents}
+		WHERE STORY_NUMBER = #{storyNumber}
+	</update>
+	
+	<select id="storyList" parameterType="storyVO" resultType="egovMap">
+		SELECT b.* FROM
+		  (SELECT a.*,
+		        FLOOR( (a.rnum - 1) / #{rows} + 1) pageNumber
+		  FROM (SELECT aa.*,
+		          ROWNUM rnum
+		      	  FROM (SELECT	STORY_NUMBER,
+						STORY_TITLE,
+						STORY_SUBTITLE,
+						STORY_COUNT,
+						STORY_LIKE,
+						STORY_DATE,
+						SEQ,
+						PAGE_NUMBER
+						FROM STORY
+						ORDER BY SEQ) aa
+		      ORDER BY rnum ASC) a
+		  ) b
+		WHERE pageNumber = #{page}
+		ORDER BY b.rnum ASC
+	</select>
+	
+	<!-- courseCount -->
+	<select id="storyListCnt" parameterType="storyVO" resultType="egovMap">
+		SELECT count(*) TOTAL_TOT_CNT,
+	        CEIL(count(*) / #{rows}) TOTAL_PAGE
+		FROM STORY
+		ORDER BY SEQ ASC
+	</select>
+	
+	<select id="storyContents" parameterType="String" resultType="egovMap">
+		SELECT *
+		FROM STORY
+		WHERE STORY_NUMBER = #{_parameter}		
+	</select>
+	
+	<delete id="deleteCourse" parameterType="String">
+		DELETE FROM STORY 
+		WHERE STORY_NUMBER = #{_parameter}
+	</delete>
+	
+	<select id="selectStoryNumber" resultType="egovMap">
+		SELECT NVL(MAX(SEQ),0) AS STORY_NUMBER
+			FROM STORY	
+	</select>
+</mapper>

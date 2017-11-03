@@ -1,0 +1,272 @@
+/************************************
+    File Name: colors.css
+    Template Name: TruvaTour
+    Created By: Similar Icons
+    Envato Profile: http://themeforest.net/user/similaricons
+    Website: https://similaricons.com
+    Version: 1.0
+************************************/
+
+/* PRIMARY COLOR */
+
+.ribbon_alt span::before {
+    border-left: 3px solid #e4745a;
+    border-top: 3px solid #e4745a;
+}
+
+.ribbon_alt span::after {
+    border-right: 3px solid #e4745a;
+    border-top: 3px solid #e4745a;
+}
+
+.testimonials blockquote::after {
+    border-color: #e4745a transparent transparent transparent;
+}
+
+.bgcolor,
+.day-box .title-type h4,
+.cdetails i,
+.nav-tabs > li:hover a,
+.nav-tabs > li:focus a,
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus,
+.restaurant-list .magni-desc a,
+.owl-theme .owl-dots .owl-dot.active span,
+.owl-theme .owl-dots .owl-dot:hover span,
+.pagination > .active > a,
+.pagination > .active > span,
+.pagination > .active > a:hover,
+.pagination > .active > span:hover,
+.pagination > .active > a:focus,
+.pagination > .active > span:focus,
+.checkbox-primary input[type="checkbox"]:checked + label::before,
+.widget-title hr,
+.owl-custom .owl-nav [class*="owl-"],
+.btn-primary:hover,
+.btn-primary:focus {
+    color: #ffffff;
+    background-color: #e4745a;
+    border-color: #e4745a;
+}
+
+.contact-form .form-control:focus {
+    border-color: #e4745a !important;
+}
+
+.progress-bar-primary,
+.bootstrap-datetimepicker-widget.dropdown-menu {
+    background: #e4745a none repeat scroll 0 0;
+    border-color: #e4745a !important;
+}
+
+
+/* PRIMARY COLOR HOVER */
+
+.section.lb #owl-tours.owl-custom .owl-nav [class*="owl-"],
+.show-forms span,
+.magni-portfolio a,
+.tagwidget li:hover,
+.sidebar .searchform .input-group-addon {
+    color: #ffffff !important;
+    background-color: #f18167 !important;
+    border-color: #f18167 !important;
+}
+
+.custom-progress .progress-bar,
+.section-big-title hr,
+.cdetails p:hover i,
+.restaurant-list .magni-desc a:hover,
+.ribbon_alt span,
+.car-list-wrap .list-categories li:hover,
+.list-grid a.active,
+.car-sidebar .search-top .bootstrap-select.btn-group .dropdown-menu li:hover a,
+.slider-selection,
+.modal .close,
+.pagination > li > a:hover,
+.pagination > li > span:hover,
+.pagination > li > a:focus,
+.pagination > li > span:focus,
+.navbar-default .navbar-toggle,
+.navbar-default .navbar-toggle:hover,
+.navbar-default .navbar-toggle:focus,
+.car-wrapper .list-inline li,
+.car-price,
+.invis-title,
+.btn-primary,
+.owl-custom .owl-nav [class*="owl-"]:hover,
+.owl-custom .owl-nav [class*="owl-"]:focus,
+.topbar .dropdown-menu li:hover a,
+.topbar .dropdown-menu li:focus a {
+    color: #ffffff;
+    background-color: #f18167;
+    border-color: #f18167;
+}
+
+.testimonials span.testimonials-name,
+#owl-tours.owl-custom .owl-nav [class*="owl-"] {
+    color: #f18167 !important;
+}
+
+.customicons i:hover,
+.lightbox .box h4,
+.question h3 strong,
+.welcome-text a,
+.normal-register .col-register h4,
+.sitemap-title,
+.intro h1,
+.media-body h5 a,
+.authorbox a,
+.closed,
+.blog-meta ul li i,
+.comments-list .media h5,
+.restaurant-list .cruise-span a,
+.vehicle-price strong,
+.agent-contact a,
+.car-single-title i,
+.sidebar .twitter-posts a,
+.breadcrumb > li a,
+.shop-top p a,
+.mapbox-wrap small,
+.copyrights a,
+.stat-wrap i,
+.copyrights a:hover,
+.calloutbox h2 strong,
+.topbar ul li i,
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:hover,
+.navbar-default .navbar-nav > .open > a:focus,
+.navbar-toggle,
+.navbar .navbar-toggle:hover,
+.small-title-area i,
+.navbar .navbar-toggle:focus,
+.navbar .dropdown-menu li > a:hover,
+.navbar.navbar-default .dropdown-menu li > a:hover,
+.navbar .dropdown-menu li > a:focus,
+.navbar.navbar-default .dropdown-menu li > a:focus,
+.navbar .dropdown-menu .active > a,
+.navbar.navbar-default .dropdown-menu .active > a,
+.navbar .dropdown-menu .active > a:hover,
+.navbar.navbar-default .dropdown-menu .active > a:hover,
+.navbar .dropdown-menu .active > a:focus,
+.navbar.navbar-default .dropdown-menu .active > a:focus .navbar .navbar-nav > .open > a,
+.navbar .navbar-nav > .open > a:hover,
+.navbar .navbar-nav > .open > a:focus,
+.navbar .navbar-nav > li > a:hover,
+.navbar .navbar-nav > li > a:focus,
+.navbar .navbar-nav > .active > a,
+.navbar .navbar-nav > .active > a:hover,
+.navbar .navbar-nav > .active > a:focus,
+.navbar .navbar-nav > .disabled > a,
+.navbar .navbar-nav > .disabled > a:hover,
+.navbar .navbar-nav > .disabled > a:focus {
+    color: #f18167;
+}
+
+.twitter-posts a {
+    border-color: #f18167;
+}
+
+.bootstrap-datetimepicker-widget td span:hover,
+.bootstrap-datetimepicker-widget thead tr:first-child th:hover,
+.bootstrap-datetimepicker-widget td.day:hover,
+.bootstrap-datetimepicker-widget td.hour:hover,
+.bootstrap-datetimepicker-widget td.minute:hover,
+.bootstrap-datetimepicker-widget td.second:hover,
+.bootstrap-datetimepicker-widget td.active,
+.bootstrap-datetimepicker-widget td.active:hover {
+    background: #f18167 !important;
+    background-color: #f18167 !important;
+    color: #ffffff !important;
+}
+
+
+/* SECOND COLOR */
+
+.callusbox h4 i,
+zz .day-box strong,
+.car-list-wrap .readmore,
+.car-list-wrap .list-inline li a,
+.cruise-span strong,
+.section-title a,
+.list-categories li a,
+.list-item .readmore,
+.list-bottom sub {
+    color: #2f88b9;
+}
+
+.ribbon span::before {
+    border-left: 3px solid #2f88b9;
+    border-top: 3px solid #2f88b9;
+}
+
+.ribbon span::after {
+    border-right: 3px solid #2f88b9;
+    border-top: 3px solid #2f88b9;
+}
+
+.c1,
+.custom-tours .car-wrapper .list-inline li,
+.ribbon_featured,
+.list-categories li:hover,
+.bg {
+    background-color: #2f88b9;
+    border-color: #2f88b9;
+    color: #ffffff;
+}
+
+
+/* SECOND COLOR HOVER */
+
+.c1:hover,
+.ribbon span {
+    background-color: #3b94c5;
+    border-color: #3b94c5;
+}
+
+
+/* DARK COLOR */
+
+.portfolio-filter ul li a.active,
+.portfolio-filter ul li a:hover {
+    background-color: #102b4e !important;
+    color: #ffffff !important;
+}
+
+.list-grid a,
+.car-sidebar,
+.footer .social-links .icon,
+.footer-box,
+.copyrights {
+    background-color: #102b4e;
+}
+
+@media (max-width: 992px) {
+    .transparent-header .navbar-default,
+    .transparent-header .header,
+    .transparent-header .topbar {
+        background-color: #102b4e;
+    }
+}
+
+
+/* DARK SECOND COLOR */
+
+.footer,
+.dmtop,
+.car-sidebar .search-top .time-picker .form-control,
+.car-sidebar .search-top textarea,
+.car-sidebar .search-top .btn-default:hover,
+.car-sidebar .search-top .btn-default:focus,
+.car-sidebar .search-top .bootstrap-select.btn-group .dropdown-menu,
+.car-sidebar .search-top .btn-group.open .dropdown-toggle,
+.car-sidebar .search-top .btn-default {
+    background-color: #183356;
+    border-color: #183356;
+}
+
+@media (min-width: 992px) {
+    .transparent-header .header.affix {
+        background-color: #183356 !important;
+    }
+}

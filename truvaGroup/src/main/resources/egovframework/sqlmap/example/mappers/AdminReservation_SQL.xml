@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.adminReservation.service.impl.AdminReservationMapper">
+	
+	<!-- 예약 조회 -->
+	<select id="adminReservationMain" parameterType="adminReservationVO" resultType="egovMap">
+	SELECT aa.*
+		FROM (SELECT a.*,
+				FLOOR ((a.subSeq - 1) / #{rows} + 1) pageNumBer
+			FROM (SELECT o.OR_NUMBER,
+				o.OR_MEMBER_YN,
+				o.OR_DATE,
+				r.RES_NUMBER,
+				r.RES_TYPE,
+				r.RES_SEAT,
+				r.RES_DATE,
+				r.RES_NAME,
+				r.RES_COUNT,
+				r.RES_PHONE,
+				r.RES_EMAIL,
+				r.PRODUCT_NUMBER,
+		        ROWNUM subSeq
+			FROM ORDER_T o, RESERVATION r
+			WHERE o.RES_NUMBER = r.RES_NUMBER
+			<choose>
+				<when test="surchSelect !=null and surchSelect !=''">
+					<if test="surchSelect == '이름'">
+						AND o.OR_NAME = #{surchText}
+						AND r.RES_NAME = #{surchText}
+					</if>	
+					<if test="surchSelect == '예약번호'">
+						AND r.RES_NUMBER = #{surchText}
+					</if>
+					<if test="surchSelect == '주문번호'">
+						AND o.OR_NUMBER = #{surchText}
+					</if>
+				</when>
+				<when test="endDate !=null and endDate !=''">
+					AND	r.RES_DATE BETWEEN TO_DATE(#{startDate}, 'YYYY-MM-DD') AND TO_DATE(#{endDate}, 'YYYY-MM-DD')+1
+				</when>
+				<when test="startDate !=null and startDate !=''">
+					AND	r.RES_DATE BETWEEN TO_DATE(#{startDate}, 'YYYY-MM-DD') AND ADD_MONTHS(SYSDATE, +6)
+				</when>
+			</choose>
+  			ORDER BY OR_DATE ASC) a) aa
+    	WHERE aa.pageNumBer = #{page}
+		ORDER BY aa.OR_DATE ASC
+	</select>
+	
+	<!-- 예약 페이징 -->
+	<select id="adminReservationCnt" parameterType="adminReservationVO" resultType="egovMap">
+		SELECT count(*) TOTAL_CNT
+			, CEIL (count(*) / #{rows}) TOTAL_PAGE
+			FROM (SELECT o.OR_NUMBER,
+				o.OR_MEMBER_YN,
+				o.OR_DATE,
+				o.OR_NAME,
+				r.RES_NUMBER,
+				r.RES_TYPE,
+				r.RES_SEAT,
+				r.RES_DATE,
+				r.RES_NAME,
+				r.RES_COUNT,
+				r.RES_PHONE,
+				r.RES_EMAIL,
+				r.PRODUCT_NUMBER
+			FROM ORDER_T o, RESERVATION r
+			WHERE o.RES_NUMBER = r.RES_NUMBER) a
+		WHERE 1=1
+		<choose>
+			<when test="surchSelect !=null and surchSelect !=''">
+				<if test="surchSelect == '이름'">
+					AND OR_NAME = #{surchText}
+					AND RES_NAME = #{surchText}
+				</if>	
+				<if test="surchSelect == '예약번호'">
+					AND RES_NUMBER = #{surchText}
+				</if>
+				<if test="surchSelect == '주문번호'">
+					AND OR_NUMBER = #{surchText}
+				</if>
+			</when>
+			<when test="endDate !=null and endDate !=''">
+				AND	RES_DATE BETWEEN TO_DATE(#{startDate}, 'YYYY-MM-DD') AND TO_DATE(#{endDate}, 'YYYY-MM-DD')+1
+			</when>
+			<when test="startDate !=null and startDate !=''">
+				AND	RES_DATE BETWEEN TO_DATE(#{startDate}, 'YYYY-MM-DD') AND ADD_MONTHS(SYSDATE, +6)
+			</when>
+		</choose>
+	</select>
+	
+	<!-- 오더 조회 -->
+	<select id="resOrderInfo" parameterType="String" resultType="egovMap">
+		SELECT OR_NUMBER,
+			OR_MEMBER_YN,
+			OR_NAME,
+			OR_KIND,
+			OR_PHONE,
+			OR_EMAIL,
+			OR_USE_POINT,
+			OR_DISCONT,
+			OR_PRICE,
+			OR_PAYMENT,
+			OR_DATE,
+			OR_CHECK_REVIEW,
+			COUPON_PUB_NUMBER
+		FROM ORDER_T
+		WHERE OR_NUMBER = #{_parameter}
+	</select>
+	
+	<!-- 결제상태 변경 -->
+	<select id="selectOrderCancel" parameterType="String" resultType="egovMap">
+		UPDATE ORDER_T
+			SET OR_PAYMENT = 'cancel'
+		WHERE OR_NUMBER = #{_parameter}
+	</select>
+	
+	<!-- 그리드 변경시 업데이트 -->
+	<select id="selectOrderSave" parameterType="Map" resultType="egovMap">
+		UPDATE ORDER_T
+			SET OR_NUMBER = #{orNumber},
+				OR_MEMBER_YN = #{orMemberYn},
+				RES_NUMBER = #{resNumber}
+		WHERE RES_NUMBER = #{resNumber}
+	</select>
+	<select id="selectResSave" parameterType="Map" resultType="egovMap">
+		UPDATE RESERVATION
+			SET RES_NUMBER = #{resNumber},
+				RES_TYPE = #{resType},
+				RES_SEAT = #{resSeat},
+				RES_DATE = #{resDate},
+				RES_NAME = #{resName},
+				RES_COUNT = #{resCount},
+				RES_PHONE = #{resPhone},
+				RES_EMAIL = #{resEmail},
+				PRODUCT_NUMBER = #{productNumber}
+		WHERE RES_NUMBER = #{resNumber}
+	</select>
+	
+	<!-- 예약현황 조회 -->
+	<select id="selectAllCouseList" parameterType="adminReservationVO" resultType="egovMap">
+		SELECT aa.*
+			FROM (SELECT a.*,
+					FLOOR ((a.subSeq - 1) / #{rows} + 1) pageNumBer
+					FROM (SELECT COURSE_NUMBER,
+							COURSE_STATUS,
+							COURSE_TITLE,
+			      			ROWNUM subSeq
+							FROM COURSE
+		  			ORDER BY subSeq ASC) a) aa
+	    	WHERE aa.pageNumBer = #{page}
+	    	<if test="surchSelect != null and surchSelect != ''">
+	    		AND COURSE_STATUS = #{surchSelect}
+	    	</if>
+			ORDER BY aa.subSeq
+	</select>
+	<select id="selectStatusThisWeek" parameterType="Map" resultType="egovMap">
+		SELECT DISTINCT aaaa.COURSE_NUMBER,
+			sum(aaaa.RES_COUNT) OVER(PARTITION BY aaaa.COURSE_NUMBER) AS WEEK_COUNT
+			FROM (SELECT aaa.RES_COUNT,
+	   				aaa.COURSE_NUMBER,
+	    			c.COURSE_TITLE
+					FROM (SELECT aa.*,
+	    					COURSE_NUMBER
+							FROM (SELECT a.*
+									FROM (SELECT o.OR_DATE,
+	    									r.PRODUCT_NUMBER,
+	    									r.RES_COUNT
+											FROM ORDER_T o, RESERVATION r
+	   										WHERE o.RES_NUMBER = r.RES_NUMBER) a
+	    							WHERE a.OR_DATE between TO_DATE(#{getThisWeek} || '00:00:00', 'YYYY-MM-DD HH24:MI:SS') and SYSDATE + 1) aa, PRODUCT p
+	    					WHERE aa.PRODUCT_NUMBER = p.PRODUCT_NUMBER) aaa, COURSE c
+	   				WHERE aaa.COURSE_NUMBER = c.COURSE_NUMBER) aaaa
+	   		WHERE aaaa.COURSE_NUMBER = #{courseNumber}
+	</select>
+	<select id="selectStatusPrevWeek" parameterType="Map" resultType="egovMap">
+		SELECT DISTINCT aaaa.COURSE_NUMBER,
+			sum(aaaa.RES_COUNT) OVER(PARTITION BY aaaa.COURSE_NUMBER) AS WEEK_COUNT
+			FROM (SELECT aaa.RES_COUNT,
+	   				aaa.COURSE_NUMBER,
+	    			c.COURSE_TITLE
+					FROM (SELECT aa.*,
+	    					COURSE_NUMBER
+							FROM (SELECT a.*
+									FROM (SELECT o.OR_DATE,
+	    									r.PRODUCT_NUMBER,
+	    									r.RES_COUNT
+											FROM ORDER_T o, RESERVATION r
+	   										WHERE o.RES_NUMBER = r.RES_NUMBER) a
+	    							WHERE a.OR_DATE between TO_DATE(#{prevWeekMon} || '00:00:00', 'YYYY-MM-DD HH24:MI:SS') and TO_DATE(#{prevWeekSun} || '23:59:59', 'YYYY-MM-DD HH24:MI:SS') + 1) aa, PRODUCT p
+	    					WHERE aa.PRODUCT_NUMBER = p.PRODUCT_NUMBER) aaa, COURSE c
+	   				WHERE aaa.COURSE_NUMBER = c.COURSE_NUMBER) aaaa
+	   		WHERE aaaa.COURSE_NUMBER = #{courseNumber}
+	</select>
+	<select id="selectStatusTotal" parameterType="Map" resultType="egovMap">
+		SELECT DISTINCT aaa.COURSE_NUMBER,
+				sum(aaa.RES_COUNT) OVER(PARTITION BY aaa.COURSE_NUMBER) AS TOTAL_COUNT
+				FROM (SELECT aa.RES_COUNT,
+					   	aa.COURSE_NUMBER,
+					    c.COURSE_TITLE
+						FROM (SELECT a.*,
+						    	COURSE_NUMBER
+								FROM (SELECT o.OR_DATE,
+									    r.PRODUCT_NUMBER,
+									    r.RES_COUNT
+										FROM ORDER_T o, RESERVATION r
+					    		WHERE o.RES_NUMBER = r.RES_NUMBER) a, PRODUCT p
+					    WHERE a.PRODUCT_NUMBER = p.PRODUCT_NUMBER) aa, COURSE c
+				WHERE aa.COURSE_NUMBER = c.COURSE_NUMBER) aaa
+	    WHERE aaa.COURSE_NUMBER = #{courseNumber}
+	</select>
+	<select id="selectStatusTotalReview" parameterType="Map" resultType="egovMap">
+		SELECT COUNT(*) AS TOTAL_REVIEW
+			FROM REVIEW
+	    WHERE COURSE_NUMBER = #{courseNumber}
+	</select>
+	<!-- 예약 페이징 -->
+	<select id="selectAllCouseListCnt" parameterType="adminReservationVO" resultType="egovMap">
+		SELECT count(*) TOTAL_CNT
+			, CEIL (count(*) / #{rows}) TOTAL_PAGE
+			FROM COURSE
+		WHERE 1=1
+	</select>
+	
+	
+	
+	
+	
+	
+</mapper>

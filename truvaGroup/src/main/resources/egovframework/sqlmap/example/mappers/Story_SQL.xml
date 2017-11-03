@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.outline.service.impl.StoryMapper">
+	
+	<select id="storyList" parameterType="String" resultType="egovMap">
+		SELECT STORY_NUMBER,
+			STORY_TITLE,
+			STORY_SUBTITLE,
+			STORY_CONTENTS,
+			STORY_COUNT,
+			STORY_LIKE,
+			STORY_DATE,
+			SEQ
+		FROM STORY
+		WHERE 1=1
+		<if test="_parameter != '' and _parameter != null">
+			AND STORY_NUMBER = #{_parameter}
+		</if>
+		ORDER BY SEQ ASC
+	</select>
+	
+	<select id="storyListVO" parameterType="cmmnVO" resultType="egovMap">
+		SELECT b.* FROM
+		  (SELECT a.*,
+		        FLOOR( (a.rnum - 1) / #{rows} + 1) pageNumber
+		  FROM (SELECT aa.*,
+		          ROWNUM rnum
+		      	  FROM (SELECT STORY_NUMBER,
+							STORY_TITLE,
+							STORY_SUBTITLE,
+							STORY_COUNT,
+							STORY_LIKE,
+							STORY_DATE,
+							SEQ
+							FROM STORY
+							ORDER BY SEQ DESC) aa
+		      ORDER BY rnum ASC) a
+		  ) b
+		WHERE pageNumber = #{page}
+		ORDER BY b.rnum ASC
+	</select>
+	
+	<!-- storyCount -->
+	<select id="storyListCnt" parameterType="cmmnVO" resultType="egovMap">
+		SELECT count(*) TOTAL_TOT_CNT,
+	        CEIL(count(*) / #{rows}) TOTAL_PAGE
+		FROM STORY
+		ORDER BY SEQ DESC
+	</select>
+	
+	<update id="insertCount" parameterType="String">
+		UPDATE STORY
+		SET STORY_COUNT = NVL(STORY_COUNT, 0) + 1
+		WHERE 1=1
+		<if test="_parameter != '' and _parameter != null">
+			AND STORY_NUMBER = #{_parameter}
+		</if>
+	</update>
+	
+	<insert id="insertStoryLike" parameterType="Map">
+		INSERT INTO 
+		STORYLIKE (MEMBER_NUMBER,
+				STORY_NUMBER)
+		VALUES (#{memberNumber},
+				#{storyNumber})
+	</insert>
+	
+	<delete id="deleteStoryLike" parameterType="Map">
+		DELETE 
+		FROM STORYLIKE
+		WHERE MEMBER_NUMBER =  #{memberNumber}
+			  AND STORY_NUMBER = #{storyNumber}
+	</delete>
+	
+	<update id="addStoryLike" parameterType="Map">
+		UPDATE STORY 
+		SET STORY_LIKE = STORY_LIKE+1
+		WHERE STORY_NUMBER = #{storyNumber}
+	</update>
+
+	<update id="subStoryLike" parameterType="Map">
+		UPDATE STORY 
+		SET STORY_LIKE = STORY_LIKE-1
+		WHERE STORY_NUMBER = #{storyNumber}
+	</update>
+	
+	<select id="selectStoryLike" parameterType="Map" resultType="egovMap">
+		SELECT * 
+		FROM STORYLIKE
+		WHERE STORY_NUMBER = #{storyNumber} AND MEMBER_NUMBER = #{memberNumber}
+	</select>	
+	
+</mapper>

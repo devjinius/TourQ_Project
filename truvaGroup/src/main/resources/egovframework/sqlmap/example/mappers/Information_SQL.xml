@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.information.service.impl.InformationMapper">
+	
+	<!-- 코스 조회 -->
+	<select id="courseList" parameterType="String" resultType="egovMap">
+		SELECT	*
+		FROM COURSE
+		WHERE 1=1
+		<if test="_parameter != '' and _parameter != null">
+			AND COURSE_NUMBER = #{_parameter}
+		</if>
+		ORDER BY SEQ
+	</select>
+	
+	<select id="courseListVO" parameterType="informationCourseVO" resultType="egovMap">
+		SELECT b.* FROM
+		  (SELECT a.*,
+		        FLOOR( (a.rnum - 1) / #{rows} + 1) pageNumber
+		  FROM (SELECT aa.*,
+		          ROWNUM rnum
+		      	  FROM (SELECT *
+				      	FROM COURSE
+				      	WHERE 1=1
+				      	<if test="searchTheme != '' and searchTheme != null">
+							AND THEME_NUMBER = #{searchTheme}
+						</if>
+						<if test="searchName != '' and searchName != null">
+							AND COURSE_TITLE LIKE  '%' || #{searchName} || '%'
+						</if>
+						<if test="startPrice != '' and startPrice != null and endPrice != '' and endPrice != null ">
+							AND COURSE_PRICE &gt;= #{startPrice} AND COURSE_PRICE &lt; #{endPrice}
+						</if>
+				      	ORDER BY SEQ) aa
+		      ORDER BY rnum ASC) a
+		  ) b
+		WHERE pageNumber = #{page}
+		ORDER BY b.rnum ASC
+	</select>
+
+	<!-- 코스 조건포함 조회 -->
+	<select id="searchCourseList" parameterType="Map" resultType="egovMap">
+		SELECT	COURSE_NUMBER, 
+			COURSE_STATUS,
+			COURSE_TITLE,
+			COURSE_SUBTITLE,
+			COURSE_PRICE,
+			COURSE_CONTENTS,
+			COURSE_DETAIL,
+			COURSE_TIME,
+			POPULAR,
+			RECOMMAND,
+			COURSE_PLACE,
+			COURSE_DATE,
+			BUS_NO,
+			THEME_NUMBER
+		FROM COURSE
+		WHERE 1=1
+		<if test="searchTheme != '' and searchTheme != null">
+			AND THEME_NUMBER = #{searchTheme}
+		</if>
+		<if test="searchName != '' and searchName != null">
+			AND COURSE_TITLE LIKE  '%' || #{searchName} || '%'
+		</if>
+		<if test="startPrice != '' and startPrice != null and endPrice != '' and endPrice != null ">
+			AND COURSE_PRICE &gt;= #{startPrice} AND COURSE_PRICE &lt; #{endPrice}
+		</if>
+		ORDER BY SEQ
+	</select>
+	
+	<!-- 마커조회 -->
+	<select id="markerList" parameterType="String" resultType="egovMap">
+		SELECT	MARKER_NUMBER,
+			MARKER_NAME,
+			MARKER_CONTENTS,
+			MARKER_LAT,
+			MARKER_LON,
+			MARKER_TYPE,
+			MARKER_DATE,
+			COURSE_NUMBER
+		FROM MARKER
+		WHERE 1=1
+		<if test="_parameter != '' and _parameter != null">
+			AND COURSE_NUMBER = #{_parameter}
+		</if>
+		ORDER BY MARKER_TYPE
+	</select>
+	
+	<!-- 출발지 마커 조회 -->
+	<select id="markerListZero" parameterType="informationCourseVO" resultType="egovMap">
+		SELECT	MARKER_NUMBER,
+			MARKER_NAME,
+			MARKER_CONTENTS,
+			MARKER_LAT,
+			MARKER_LON,
+			MARKER_TYPE,
+			MARKER_DATE,
+			COURSE_NUMBER
+		FROM MARKER
+		WHERE MARKER_TYPE = 0
+		ORDER BY SEQ
+	</select>
+	
+	<select id="markerListZeroVO" parameterType="informationCourseVO" resultType="egovMap">
+		SELECT b.* FROM
+		  (SELECT a.*,
+		        FLOOR( (a.rnum - 1) / #{rows} + 1) pageNumber
+		   FROM (SELECT aa.*,
+		   				ROWNUM rnum
+		   		 FROM  (SELECT	m.*
+						FROM MARKER m
+						WHERE MARKER_TYPE = 0
+						AND m.COURSE_NUMBER IN
+			          		(SELECT c.COURSE_NUMBER FROM COURSE c
+			          		 	WHERE 1=1
+								<if test="searchTheme != '' and searchTheme != null">
+									AND c.THEME_NUMBER = #{searchTheme}
+								</if>
+								<if test="searchName != '' and searchName != null">
+									AND c.COURSE_TITLE LIKE  '%' || #{searchName} || '%'
+								</if>
+								<if test="startPrice != '' and startPrice != null and endPrice != '' and endPrice != null ">
+									AND c.COURSE_PRICE &gt;= #{startPrice} AND c.COURSE_PRICE &lt; #{endPrice}
+								</if>
+							)
+						ORDER BY SEQ) aa
+				 ) a
+		  	) b
+		WHERE pageNumber = #{page}
+		ORDER BY b.rnum ASC
+	</select>
+	
+	<select id="markerListSearch" parameterType="Map" resultType="egovMap">
+		SELECT	*
+		FROM MARKER m
+		WHERE MARKER_TYPE = 0 
+			AND m.COURSE_NUMBER IN
+          		(SELECT c.COURSE_NUMBER FROM COURSE c
+          		 	WHERE 1=1
+					<if test="searchTheme != '' and searchTheme != null">
+						AND c.THEME_NUMBER = #{searchTheme}
+					</if>
+					<if test="searchName != '' and searchName != null">
+						AND c.COURSE_TITLE LIKE  '%' || #{searchName} || '%'
+					</if>
+					<if test="startPrice != '' and startPrice != null and endPrice != '' and endPrice != null ">
+						AND c.COURSE_PRICE &gt;= #{startPrice} AND c.COURSE_PRICE &lt; #{endPrice}
+					</if>
+				)
+		ORDER BY SEQ
+	</select>
+
+	<!-- count -->
+	<select id="courseListCnt" parameterType="informationCourseVO" resultType="egovMap">
+		SELECT count(*) TOTAL_TOT_CNT,
+	        CEIL(count(*) / #{rows}) TOTAL_PAGE
+		FROM COURSE
+		WHERE 1=1
+		<if test="searchTheme != '' and searchTheme != null">
+			AND THEME_NUMBER = #{searchTheme}
+		</if>
+		<if test="searchName != '' and searchName != null">
+			AND COURSE_TITLE LIKE  '%' || #{searchName} || '%'
+		</if>
+		<if test="startPrice != '' and startPrice != null and endPrice != '' and endPrice != null ">
+			AND COURSE_PRICE &gt;= #{startPrice} AND COURSE_PRICE &lt; #{endPrice}
+		</if>
+		ORDER BY SEQ ASC
+	</select>
+	
+	<select id="reviewList" parameterType="informationCourseVO" resultType="egovMap">
+		SELECT b.* FROM
+		  (SELECT a.*,
+		        FLOOR( (a.rnum - 1) / #{rows} + 1) pageNumber
+		  FROM (SELECT aa.*,
+		          ROWNUM rnum
+		      	  FROM (SELECT r.REVIEW_TITLE,
+						      r.REVIEW_CONTENTS,
+						      r.REVIEW_RANK,
+						      r.REVIEW_DATE,
+						      m.MEMBER_NAME,
+						      r.REVIEW_NUMBER,
+						      r.PAGE_NUMBER
+						FROM REVIEW r, MEMBER m
+						WHERE r.MEMBER_NUMBER = m.MEMBER_NUMBER
+						<if test="courseNumber != '' and courseNumber != null">
+							AND r.COURSE_NUMBER = #{courseNumber}
+						</if>
+						ORDER BY r.REVIEW_DATE) aa
+		      ORDER BY rnum ASC) a
+		  ) b
+		WHERE pageNumber = #{page}
+		ORDER BY b.rnum ASC
+	</select>
+	
+	<!-- count -->
+	<select id="reviewListCnt" parameterType="informationCourseVO" resultType="egovMap">
+		SELECT count(*) TOTAL_TOT_CNT,
+	        CEIL(count(*) / #{rows}) TOTAL_PAGE,
+	        NVL(AVG(r.REVIEW_RANK), 0) TOT_RANK
+		FROM REVIEW r, MEMBER m
+		WHERE r.MEMBER_NUMBER = m.MEMBER_NUMBER
+		<if test="courseNumber != '' and courseNumber != null">
+			AND r.COURSE_NUMBER = #{courseNumber}
+		</if>
+		ORDER BY r.REVIEW_DATE
+	</select>
+	
+	<!-- 테마 가져오기 -->
+	<select id="themeList" resultType="egovMap">
+		SELECT	*
+		FROM THEME
+		WHERE THEME_YN = 'Y'
+		ORDER BY SEQ
+	</select>
+
+	<!-- 테마 가져오기 -->
+	<select id="reviewInfoList" parameterType="String" resultType="egovMap">
+		SELECT COUNT(*) totCnt,
+			   AVG(REVIEW_RANK) rank
+		FROM REVIEW
+		WHERE COURSE_NUMBER = #{_parameter}
+		ORDER BY COURSE_NUMBER
+	</select>
+	
+	<insert id="insertCourseLike" parameterType="Map">
+		INSERT INTO 
+		WISHLIKE (MEMBER_NUMBER,
+				COURSE_NUMBER)
+		VALUES (#{memberNumber},
+				#{courseNumber})
+	</insert>
+	
+	<delete id="deleteCourseLike" parameterType="Map">
+		DELETE 
+		FROM WISHLIKE
+		WHERE MEMBER_NUMBER =  #{memberNumber}
+			  AND COURSE_NUMBER = #{courseNumber}
+	</delete>
+	
+	<!-- wishLise가져오기 -->
+	<select id="selectWishList" parameterType="Map" resultType="egovMap">
+		SELECT * FROM WISHLIKE
+		WHERE MEMBER_NUMBER = #{memberNumber}
+			  AND COURSE_NUMBER IN 
+				  <foreach collection="courseNumberList" item="item" open="(" close=")" separator=",">
+	              		#{item}
+	        	  </foreach>
+		ORDER BY COURSE_NUMBER
+	</select>
+	
+</mapper>

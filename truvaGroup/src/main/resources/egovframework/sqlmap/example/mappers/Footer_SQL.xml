@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.footer.service.impl.FooterMapper">
+	
+	<!-- 최근 스토리 조회 -->
+	<select id="storyRecent" resultType="egovMap">
+		SELECT aa.*
+		FROM (SELECT a.*, ROWNUM rnum
+			  FROM
+				(SELECT *
+				 FROM STORY 
+				 ORDER BY STORY_DATE DESC)a
+			  )aa
+		WHERE rnum = 1
+	</select>
+	
+	<select id="reviewRecent" resultType="egovMap">
+		SELECT aa.*
+		FROM (SELECT a.*, ROWNUM rnum
+			  FROM
+				(SELECT *
+				 FROM REVIEW 
+				 ORDER BY REVIEW_DATE DESC)a
+			  )aa
+		WHERE rnum = 1
+	</select>
+	
+</mapper>

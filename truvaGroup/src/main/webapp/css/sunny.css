@@ -1,0 +1,819 @@
+.padding0 {
+	padding: 0 !important;
+}
+.paddingLeft0 {
+	padding-left: 0;
+}
+.join-title {
+	padding: 5px;
+}
+hr.margin0 {
+	margin-top: 0 !important;
+}
+#prodList > tbody > tr:hover,
+#prodList > tbody > tr.select {
+	cursor: pointer;
+	background-color: #f8f8f8;
+	color: #777777;
+}
+.my-course-list.box {
+	padding: 15px;
+}
+.my-course-list h4 {
+	padding-top: 0;
+	font-size: 18px;
+}
+.my-course-list span {
+	font-size: 13px;
+	color: #a6a6a6;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	display: block;
+}
+.askComplet-btn {
+	float: right;
+}
+.askComplet-btn > button {
+	float: left;
+}
+.res-table-btn {
+	background-color: #fff;
+    border-color: #d4d4d4;
+    border-radius: 0 !important;
+    color: #757575;
+    font-size: 13px;
+    margin: 0;
+    padding: 0 5px !important;
+}
+.modal.bus-seat-modal {
+	display: block;
+	z-index: 2000;
+}
+.modal-bg {
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	background-color: rgba(0, 0, 0, 0.4);
+	z-index: -100;
+}
+#myPoint:after{
+	content: "원";
+}
+#reservationFrm input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.joinArea {
+	position: relative;
+}
+.join-btn-area {
+	position: absolute;
+	right: 0;
+	bottom: 20px;
+}
+.seat-info {
+	display: none;
+}
+/* 리뷰 게시판 관련 */
+.comments-list .review-more-img img {
+	max-width: 540px;
+	max-height: 378px;
+	margin: 0;
+}
+.comments-list > .media > .review-wrap-center {
+	float: none;
+	margin: 0 auto;
+}
+.review-wrap-center > h4 {
+	padding-top:20px;
+}
+.review-wrap-center > p {
+	height: 48px;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+		-webkit-line-clamp: 2; /* 라인수 */
+		-webkit-box-orient: vertical;
+	word-wrap:break-word; 
+	overflow: hidden;
+}
+.review-tag {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	height: 35px;
+	max-width: 200px;
+	z-index: 5;
+	padding: 0 5px;
+}
+.review-tag > .tag-bg {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background-color: rgba(0, 0, 0, 0.7);
+	z-index: 6;
+}
+.review-tag > .tag-text {
+	line-height: 35px;
+	font-size:15px;
+	color: #fff;
+	font-weight: 500;
+	display: block;
+	z-index: 15;
+	position: relative;
+}
+.review-write {
+	position: absolute;
+	right: 0;
+	top: -3px;
+	padding: 0;
+	z-index: 10;
+}
+.review-write > button {
+	padding: 2px 5px;
+}
+.review-grade {
+	height: 47px;
+	line-height: 47px;
+}
+
+/* 후기 모달창 */
+.loginCheck-text > p {
+	height : 40px;
+	padding-bottom:40px;
+}
+.loginCheck-text > p > .btn-loginCheck,
+.btn-loginCheck {
+	padding : 2px 6px 1px 6px;
+	font-size : 13px;
+	margin-left : 20px;
+}
+.btn-login {
+	width : 100%;
+	height : 105px;
+}
+.findPassword {
+	padding : 0px;
+	margin : -2px 0 0 20px;
+	font-size : 15px;
+	line-height : 1.6;
+	background:none;
+	color : #212121;
+}
+.reviewModalBox {
+	background-color: #fff;
+}
+.reviewModal-dialog {
+	width: 100%;
+	height: 100%;
+	margin: 0 auto;
+}
+.reviewModal {
+	height: 100%;
+	margin: 0 auto;
+	top: 0%;
+}
+.review-write-modal > .modal-dialog.col-lg-12 {
+	top: 18%;
+}
+.modal-open > .modal {
+	overflow-y:hidden !important;
+}
+.modal-open > .bus-seat-modal {
+	top: 12%;
+	margin: 0;
+} 
+.reviewModal > .modal-dialog {
+	position: absolute;
+	top: 6%;
+	left: 21%;
+	right: 21%;
+	width: auto;
+}
+.reservationModal > .modal-dialog {
+	top: 20%;
+	left: 29%;
+}
+
+/* 카드사 아이콘 */
+.card-select {
+	width: 100%;
+	height: 150px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	clear: both;
+}
+.card-select > li {
+	float: left;
+	position: relative;
+	margin: 0 0 10px 35px;
+	border: 1px solid rgba(202, 202, 202, 0);
+}
+.card-select > li:first-child {
+	margin-left: 16px;
+}
+.card-select > li > img {
+	width: 145px;
+	height: 60px;
+}
+.card-select > li:hover {
+	border-color: rgb(202, 202, 202);
+}
+.card-select > li.active {
+	border-color: #e30000;
+}
+
+/* 예약페이지 세부 css */
+.division {
+	padding-bottom: 75px;
+	clear: both;
+}
+.reservation-title {
+	font-weight: 500;
+	padding-bottom:10px;
+}
+.comment-input-area > div {
+    float: left;
+}
+.comment-input {
+    display: inline-block;
+    line-height: 45px;
+    height: 45px;
+    padding-right: 15px;
+    font-size: 15px;
+    color: #808080;
+}
+.comment-input > span {
+	letter-spacing: 1px;
+	display: inline-block;
+	padding-left: 5px;
+}
+.form-control > option {
+	border: none;
+	height: 30px;
+}
+.col-sm-2 > select.form-control {
+	padding: 0px !important;
+	margin: 0px !important;
+}
+.pd-top-30 {
+	padding-top: 30px;
+}
+.search-top > .radius {
+	line-height: 38px;
+	padding: 0px;
+	border-radius: 6px;
+}
+.price-guide > div > h5 {
+	font-size: 15px;
+}
+.price-guide > .discount > div {
+	color: #939393;
+	letter-spacing: 0;
+	font-size: 15px;
+}
+.price-guide > .discount > div > span {
+	font-size: 14px;
+}
+.price-guide > .discount > div > span.title:before {
+	content: "- ";
+}
+.price-guide > .discount > div > span.title:after {
+	content: " : ";
+	padding: 0 5px;
+}
+.price-guide > .discount > div:after {
+	content: "원";
+	padding-left: 5px;
+	font-size: 14px;
+}
+.price-guide > .price > .final-price {
+	font-weight: 600;
+	font-size: 30px;
+	letter-spacing: 0;
+	text-align: right;
+	color: #212121;
+}
+.price-guide > .price {
+	padding: 0;
+}
+.price-guide > .price > .final-price:after {
+	content: "원";
+	font-size: 27px;
+	padding-left: 5px;
+}
+.cash-receipts > .receipts-select > .col-sm-4 {
+	padding: 0;
+}
+.cash-receipts > .receipts-select > .col-sm-2 {
+	padding: 0 0 0 2px;
+}
+.cash-receipts > .receipts-select > .col-sm-4 > input {
+	width: 12px;
+	height: 12px;
+}
+
+/* 예약 페이지 검색 테이블 */
+.reservation-table {
+	width: 98%;
+	height: 100%;
+	margin: 10px auto;
+}
+.form-control-table {
+	height: 100% !important;
+}
+.reservation-table thead td,
+.reservation-table > tbody > tr > td {
+	text-align: center;
+	line-height: 45px;
+	height: 46px;
+}
+.reservation-table > tbody > tr {
+	border-top: 1px solid #cccccc;
+}
+.reservation-table > tbody > tr:first-child {
+	border-top: 2px solid #cccccc;
+}
+.reservation-table > tbody > tr > td {
+	font-size: 13px;
+}
+/* 예약 페이지 */
+.reservationCheck {
+	clear : both;
+	padding-top : 20px;
+}
+.reservationCheck .checkBox {
+	float : left;
+	margin-top : 20px;
+	width: 15px;
+	height: 15px;
+}
+.reservationCheck p {
+	float : left;
+	padding-left : 10px;
+}
+
+/* 예약폼 상단 여백 조절 */
+.reservation-contents > .row > .col-md-10 {
+	margin-top: 50px;
+}
+.reservation-contents > .row > .col-md-10 > h3 {
+	margin-bottom: 20px;
+}
+
+/* 마이페이지 수정 css */
+.testimonials > .myPage-question blockquote {
+	font-size: 14px;
+}
+.myPage-more {
+	font-size: 14px;
+	display: inline-block;
+	float: right;
+	padding-right: 10px;
+	line-height: 2;
+	font-weight: 600;
+}
+.myPage-more:hover {
+	color: #f18167;
+}
+.myPage-mini-title {
+	clear: both;
+	font-weight: 500;
+	line-height: 1.6;
+}
+
+/* 전체적인 테이블 공통 css */
+.cmmn-table {
+	margin-top: 30px;
+	width: 100%;
+}
+.cmmn-table > thead > tr {
+	border-bottom: 2px solid #cccccc;
+	font-weight: 500;
+}
+.cmmn-table > thead > tr > td {
+	background-image: url("../images/uploads/table-header.jpg");
+	background-repeat: no-repeat;
+	background-position: left center;
+}
+.cmmn-table > thead > tr > td:first-child {
+	background: none;
+}
+.cmmn-table tr > td {
+	text-align: center;
+	height: 45px;
+}
+.cmmn-table > tbody > tr > td,
+.cmmn-table > thead > tr > td {
+	line-height: 45px;
+	padding: 0 10px;
+}
+.cmmn-table > tbody > tr > td,
+.cmmn-table > thead > tr > td {
+	line-height: 45px;
+	padding: 0 10px;
+	border-top: none;
+}
+.cmmn-table > tbody > tr {
+	border-bottom: 1px solid #cccccc;
+}
+
+/* 문의내역 테이블 */
+.shortcode-wrap.col-md-10 {
+	float: none;
+	margin: 0 auto;
+}
+.myQuestion-table > tbody > tr > td:nth-child(1){
+	width: 10%;
+}
+.myQuestion-table > tbody > tr > td:nth-child(3),
+.myQuestion-table > tbody > tr > td:nth-child(4) {
+	width: 15%;
+}
+.myQuestion-table > tbody > tr > td:nth-child(2) {
+	text-align: left;
+}
+
+/* 내 주문내역 */
+.myOrderList-wrapper {
+	margin-top: 30px;
+}
+.myOrderList-contents {
+	width: 100%;
+	float: left;
+	padding: 0 10px 28px 10px;
+	border-bottom: 1px solid #ddd;
+}
+.myOrderList-contents > dt,
+.myOrderList-contents > dd {
+}
+.myOrderList-contents > dt > div {
+	float: left;
+}
+.myOrderList-contents > dd {
+	width: 82%;
+	float: right;
+}
+.myOrderList-contents > dt {
+}
+.myOrderList-contents > .myOrderList-img {
+	width: 100px;
+	height: 100px;
+	margin-right: 15px;
+	float: left;
+	background-size: cover !important;
+	background-position: center !important;
+}
+.myOrderList-contents > dd > .myOrderList-date {
+	text-align: center;
+}
+.myOrderList-contents > dd > .myOrderList-date > h6 {
+	color: #999;
+	font-size: 14px;
+	height: 60px;
+	line-height: 75px;
+	margin: 0px;
+}
+.myOrderList-contents > dd > .myOrderList-date > .btn-xs {
+	vertical-align: middle;
+	color: #696969;
+}
+.myOrderList-contents > dd > .myOrderList-date > h6 > span {
+	letter-spancing: 1;
+}
+.myOrderList-contents > dd > .text {
+	float: left;
+}
+.myOrderList-contents > dd > .text > h6 {
+	margin-top: 20px;
+	line-height: 1.6;
+}
+.myOrderList-contents > dd > .text >  h4 {
+	color: #f18167;
+	height: 35px;
+	line-height: 35px;
+	font-size: 18px;
+}
+.myOrderList-contents > dd > .myOrderList-date {
+	float: right;
+	width: 200px;
+}
+.order-cancel {
+	margin-top: 15px;
+}
+.order-cancel > .btn-xs {
+	display: hidden;
+}
+.myQuestion-title {
+	cursor: pointer;
+}
+
+/* 약관동의 페이지 */
+.agree-cmmn > .form-control {
+	border-radius: 0;
+	height: 200px;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	white-space: pre-line;
+}
+.agree-cmmn > .agree-Check {
+	padding: 10px 0;
+	margin: 0;
+}
+.agree-Check {
+	padding-top : 20px;
+}
+.agree-Check .checkBox {
+	float : left;
+	margin-top: 5px;
+	width: 15px;
+	height: 15px;
+}
+.agree-Check p {
+	float : left;
+	padding-left : 10px;
+}
+.radio-btn {
+	height: 18px;
+	float: left;
+}
+.agree-my-confirm {
+	padding: 0 0 0 30px;
+}
+.agree-my-confirm > .agree-Check {
+	display: inline-block;
+	padding-right: 45px;
+}
+.agree-my-phone,
+.agree-my-phone > .l-form {
+	padding: 0;
+	margin: 0;
+}
+.agree-my-phone > .l-form > div {
+	display: inline-block;
+}
+.agree-my-phone > .l-form > div > input {
+	float: left;
+}
+.agree-my-phone > .l-form > button {
+	padding: 9px 12px;
+	margin-top: -1px;
+}
+.agree-my-phone > .l-form > .form-group input:after {
+	content: "-";
+	display: inline-block;
+}
+
+/* 공지 테이블 */
+.notice-table > tbody > tr > td:nth-child(1),
+.notice-table > tbody > tr > td:nth-child(4) {
+	width: 15%;
+}
+.notice-table > tbody > tr > td:nth-child(3) {
+	width: 20%;
+}
+
+/* FAQ 관련 css */
+.panel-heading .panel-title > strong {
+	color: #f18167;
+}
+/* 포인트 게시판 */
+.myPoint-table-comment {
+	color: #858585;
+	font-size: 13px;
+}
+.myPoint-table > tbody > tr {
+	border: none;
+}
+/* 장바구니 관련 css */
+.addCart-contents {
+	float: none;
+}
+.addCart-all-select {
+	border-bottom: 1px  solid #9b9b9b;
+	padding-bottom: 5px;
+}
+.addCart-all-select > span {
+	display: inline-block;
+	padding-left: 30px;
+}
+.addCart-all-select > .addCartCheck > .checkBox {
+	vertical-align: middle;
+	margin: 0 10px 7px 10px;
+}
+.myOrderList-contents > dt > .addCartCheck {
+	padding-right: 10px;
+	line-height: 100px;
+}
+.myOrderList-contents > dd > .addCart-price {
+	float: right;
+	width: 200px;
+	font-weight: 600;
+	font-size: 18px;
+	text-align: center;
+}
+.addCartCheck {
+	float: left;
+}
+.addCartCheck > .checkBox {
+	width: 15px;
+	height: 15px;
+}
+.addCart-total-price {
+	float: left;
+	font-size: 17px;
+	text-align: right;
+	line-height: 1.6;
+	padding-right: 15px;
+}
+.addCart-total-price > span {
+	display: inline-block;
+	color: #6e6e6e;
+}
+.total-price:before {
+	content: "총 가격 : ";
+	padding: 0 10px 0 50px;
+	font-size:17px;
+	font-weight: normal;
+}
+.total-price {
+	letter-spacing: 0;
+	margin: 0 10px;
+	font-size:19px;
+	font-weight: 600;
+}
+.total-price:after {
+	content: "원";
+	padding-left: 10px;
+	font-size:17px;
+	font-weight: normal;
+}
+.addCart-button {
+	padding-right: 50px;
+}
+.addCart-button > .btn-primary {
+	margin-right: 15px;
+	float: left;
+	margin-top: 22px;
+	height: 52px;
+}
+.recentposts > .col-md-12.pd-top-30 {
+	padding-right: 50px;
+}
+
+/* 예약완료 페이지 */
+.reservationComplet-title {
+	padding: 0 0 20px 0;
+	margin: 0;
+}
+.reservationComplet-btn {
+	clear: both;
+	height: 40px;
+}
+.reservationComplet-btn > .btn {
+	float: right
+}
+.reservationComplet-contents {
+	padding-top: 40px;
+	text-align: left;
+}
+.reservationComplet-contents > p > span:before {
+	content: "- ";
+	padding-right: 5px;
+}
+.reservationComplet-tag {
+	position:relative;
+	width: 100%;
+	height: 100%;
+}
+.reservationComplet-tag > .tab-bg {
+	position: absolute;
+	background-color: rgba(0,0,0, 0.4);
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 5;
+}
+.reservationComplet-tag > .tab-text {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin: 0 0 0 -100px;
+	width: 200px;
+	height: 50px;
+	line-height: 50px;
+	text-align: center;
+	display: block;
+	background-color: #f18167;
+	z-index: 10;
+	color: #fff;
+	font-size: 22px;
+	border-radius: 25px;
+}
+
+/* 관심코스 */
+.box-close {
+	position: relative;
+}
+.box-close > .box-close-btn {
+	position: absolute;
+	right: 5px;
+	bottom: 5px;
+	clear: both;
+}
+.cruise-list {
+	margin-bottom: 25px;
+}
+.box-close > .box-close-btn > a,
+.modal-close .modal-close-btn {
+	display: block;
+	width: 17px;
+	height: 17px;
+	float: right;
+	margin: 5px;
+	background-image: url("../images/close.png");
+	background-position: center;
+    background-size: cover;
+}
+
+/* 내정보 수정 */
+.my-info-title {
+	padding-bottom: 3px;
+	display: block;
+	color: #404040;
+}
+.my-info-button {
+	float: left;
+	padding-top: 27px;
+}
+.my-info-button > .btn-xs {
+	height: 45px;
+	background-color: #f5f5f5;
+	color: #636363;
+}
+.my-info-button > .btn-xs:hover {
+	background-color: #636363;
+	color: #f5f5f5;
+}
+.surch-zip-code > .btn-xs {
+	height: 45px;
+	font-size: 13px;
+	padding: 0;
+}
+.surch-zip-code > .btn-xs.col-sm-7 {
+	padding: 0;
+}
+.adress > .my-info-button {
+	padding: 0;
+}
+.reservation-table-tab.bus:after {
+	content: "좌석 선택하기"
+}
+.reservation-table-tab.walk:after {
+	content: "예약 인원수"
+}
+input.valCheck::-webkit-input-placeholder{
+    color:text-shadow: none;
+    -webkit-text-fill-color: red;
+}
+.search-select .bootstrap-select {
+	padding: 0px !important;
+}
+.dropdown-menu.open {
+	max-height: 100px;
+}
+/* 어드민 모달창 */
+.admin-m-content {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	margin-left: -400px;
+	width: 800px;
+	background-color: #fff;
+	padding: 20px;
+	z-index: 200;
+}
+.admin-modal-bg {
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	background-color: rgba(0, 0, 0, 0.3);
+	z-index: 150;
+}
+.admin-m-title {
+	font-size: 19px;
+	padding: 10px 0 20px 0;
+	font-weight: 600;
+}
+.admin-m-text {
+	position: relative;
+	width: 100%;
+}

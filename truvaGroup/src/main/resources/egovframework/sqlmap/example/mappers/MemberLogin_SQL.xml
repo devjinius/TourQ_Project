@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.memberLogin.service.impl.MemberLoginMapper">
+	
+	<!-- 코스 조회 -->
+	<select id="getPw" parameterType="String" resultType="egovMap">
+		SELECT *
+		FROM MEMBER
+		WHERE 1=1
+			<if test="_parameter != '' and _parameter != null">
+				AND MEMBER_ID = #{_parameter}
+			</if>
+	</select>
+	
+	<insert id="register" parameterType="loginVO">
+		<selectKey resultType="String" keyProperty="seq" order="BEFORE">
+			SELECT NVL(MAX(SEQ),0)+1 AS seq
+			FROM MEMBER
+		</selectKey>
+		INSERT INTO MEMBER
+				(MEMBER_NUMBER,
+				MEMBER_ID,
+				MEMBER_PW,
+				MEMBER_MAIL,
+				MEMBER_HPF,
+				MEMBER_HPM,
+				MEMBER_HPL,
+				MEMBER_REGDATE,
+				SEQ,
+				ADMIN_YN,
+				MEMBER_NAME
+				)
+			VALUES
+				(#{seq},
+				#{memberId},
+				#{memberPw},
+				#{memberMail},
+				#{memberHpf},
+				#{memberHpm},
+				#{memberHpl},
+				SYSDATE,
+				#{seq},
+				'N',
+				#{memberName}
+				)
+	</insert>
+	
+	<select id="selectRecMn" resultType="egovMap">
+		SELECT MAX(MEMBER_NUMBER) AS memberNumber
+		FROM MEMBER
+	</select>
+	
+	<insert id="insertPoint" parameterType="map">
+		<selectKey resultType="String" keyProperty="pointNumber" order="BEFORE">
+		SELECT MAX(POINT_NUMBER)+1 AS pointNumber
+		FROM POINT
+		</selectKey>
+		INSERT INTO POINT
+		(POINT_NUMBER,
+			POINT_TITLE,
+			POINT_DATE,
+			POINT_MILE,
+			MEMBER_NUMBER,
+			POINT_TOTALMILE)
+		VALUES
+		(#{pointNumber},
+		'회원가입 축하포인트',
+		TO_CHAR(SYSDATE, 'YYYYMMDD'),
+		+5000,
+		#{membernumber},
+		(SELECT a.POINT_TOTALMILE + 5000
+			FROM (SELECT POINT_TOTALMILE,
+					ROWNUM subSeq
+					FROM POINT
+					WHERE MEMBER_NUMBER = #{membernumber}
+    				ORDER BY subSeq DESC)a
+   			 WHERE ROWNUM = 1)
+   		)
+	</insert>
+	
+	<update id="updateMemberInfo" parameterType="loginVO">
+	UPDATE MEMBER
+	  SET MEMBER_PW = #{memberPw},
+	    MEMBER_MAIL = #{memberMail},
+	    MEMBER_HPF = #{memberHpf},
+	    MEMBER_HPM = #{memberHpm},
+	    MEMBER_HPL = #{memberHpl},
+	    MEMBER_NAME = #{memberName}
+	  WHERE MEMBER_NUMBER = #{memberNumber}
+	</update>
+	
+</mapper>

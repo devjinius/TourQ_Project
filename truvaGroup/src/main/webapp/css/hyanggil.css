@@ -1,0 +1,40 @@
+/* 문의하기 modal style */
+.ask-write {
+	position: absolute;
+	right: 0;
+	top: -3px;
+	padding: 0;
+	z-index: 10;
+}
+.ask-write > button {
+	padding: 2px 5px;
+}
+
+.askModal > .modal-dialog {
+   position: absolute;
+   top: 6%;
+   left: 21%;
+   right: 21%;
+   width: auto;
+}
+
+
+/* 종료된event modal style */
+.list-view {
+	position: absolute;
+	right: 0;
+	top: -3px;
+	padding: 0;
+	z-index: 10;
+}
+.list-view > button {
+	padding: 2px 5px;
+}
+
+.listModal > .modal-dialog {
+   position: absolute;
+   top: 6%;
+   left: 21%;
+   right: 21%;
+   width: auto;
+}

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.adminMarker.service.impl.AdminMarkerMapper">
+	
+	<!-- 코스 조회 -->
+	<select id="courseList" parameterType="markerVO" resultType="egovMap">
+		SELECT b.* FROM
+		  (SELECT a.*,
+		        FLOOR( (a.rnum - 1) / #{rows} + 1) pageNumber
+		  FROM (SELECT aa.*,
+		          ROWNUM rnum
+		      	  FROM (SELECT	c.*, t.THEME_NAME
+						FROM COURSE c, THEME t
+						WHERE 1=1
+							AND c.THEME_NUMBER = t.THEME_NUMBER
+						<if test="searchTheme != '' and searchTheme != null">
+							AND c.THEME_NUMBER = #{searchTheme}
+						</if>
+						<if test="searchName != '' and searchName != null">
+							AND c.COURSE_TITLE LIKE  '%' || #{searchName} || '%'
+						</if>
+						ORDER BY c.SEQ) aa
+		      ORDER BY rnum ASC) a
+		  ) b
+		WHERE pageNumber = #{page}
+		ORDER BY b.rnum ASC
+	</select>
+	
+	<!-- courseCount -->
+	<select id="courseListCnt" parameterType="markerVO" resultType="egovMap">
+		SELECT count(*) TOTAL_TOT_CNT,
+	        CEIL(count(*) / #{rows}) TOTAL_PAGE
+		FROM COURSE c, THEME t
+		WHERE 1=1
+			AND c.THEME_NUMBER = t.THEME_NUMBER
+		<if test="searchTheme != '' and searchTheme != null">
+			AND c.THEME_NUMBER = #{searchTheme}
+		</if>
+		<if test="searchName != '' and searchName != null">
+			AND c.COURSE_TITLE LIKE  '%' || #{searchName} || '%'
+		</if>
+		ORDER BY c.SEQ ASC
+	</select>
+	
+	<!-- <select id="courseMapList" parameterType="Map" resultType="egovMap">
+		SELECT	COURSE_NUMBER, 
+			COURSE_STATUS,
+			COURSE_TITLE,
+			COURSE_SUBTITLE,
+			COURSE_PRICE,
+			COURSE_CONTENTS,
+			COURSE_DETAIL,
+			COURSE_TIME,
+			POPULAR,
+			RECOMMAND,
+			COURSE_PLACE,
+			COURSE_DATE,
+			BUS_NO,
+			THEME_NAME,
+			COURSE_START_TIME
+		FROM COURSE, THEME
+		WHERE 1=1
+			AND COURSE.THEME_NUMBER = THEME.THEME_NUMBER
+		<if test="searchTheme != '' and searchTheme != null">
+			AND THEME.THEME_NUMBER = #{searchTheme}
+		</if>
+		<if test="searchName != '' and searchName != null">
+			AND COURSE_TITLE LIKE  '%' || #{searchName} || '%'
+		</if>
+		ORDER BY SEQ
+	</select> -->
+	
+	<select id="markerList" parameterType="String" resultType="egovMap">
+		SELECT	*
+		FROM MARKER
+		WHERE 1=1
+		<if test="_parameter != ''">
+			AND COURSE_NUMBER = #{_parameter}
+		</if>
+		ORDER BY MARKER_TYPE
+	</select>
+
+	<select id="markerMapList" parameterType="String" resultType="egovMap">
+		SELECT	MARKER_NUMBER,
+			MARKER_NAME,
+			MARKER_CONTENTS,
+			MARKER_LAT,
+			MARKER_LON,
+			MARKER_TYPE,
+			MARKER_DATE,
+			COURSE_NUMBER
+		FROM MARKER
+		WHERE 1=1
+		<if test="_parameter != ''">
+			AND MARKER_NUMBER = #{_parameter}
+		</if>
+	</select>
+	
+	<insert id="insertMarker" parameterType="Map">
+	    <selectKey resultType="String" keyProperty="seq" order="BEFORE">
+			SELECT NVL(MAX(SEQ),0)+1 AS seq
+			FROM MARKER
+		</selectKey>
+			INSERT INTO MARKER
+				(MARKER_NUMBER,
+				 MARKER_NAME,
+				 MARKER_CONTENTS,
+				 MARKER_LAT,
+				 MARKER_LON,
+				 MARKER_TYPE,
+				 MARKER_DATE,
+				 COURSE_NUMBER,
+				 SEQ
+				)
+			VALUES
+				(#{seq},
+				#{title},
+				#{contents},
+				#{lat},
+				#{lon},
+				#{type},
+				SYSDATE,
+				#{courseNumber},
+				#{seq}
+				)
+	</insert>
+	
+	<update id="updateMarker" parameterType="Map">
+		UPDATE MARKER
+		SET MARKER_NAME = #{title},
+			 MARKER_CONTENTS = #{contents},
+			 MARKER_LAT = #{lat},
+			 MARKER_LON = #{lon},
+			 MARKER_TYPE = #{type}
+		WHERE MARKER_NUMBER = #{markerNumber}
+	</update>
+	
+	<select id="themeList" resultType="egovMap">
+		SELECT	*
+		FROM THEME
+		ORDER BY SEQ
+	</select>
+	
+	<delete id="deleteMarker" parameterType="String">
+		DELETE FROM MARKER 
+		WHERE MARKER_NUMBER = #{_parameter}
+	</delete>
+	
+</mapper>

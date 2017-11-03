@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.adminMemberInfo.service.impl.AdminMemberInfoMapper">
+	
+	<select id ="selectJqgridList" parameterType="adminMemberVO" resultType="egovMap">
+      SELECT  b.*
+         FROM  (
+         SELECT  a.*,
+                 ROWNUM rnum,
+                 FLOOR((ROWNUM - 1) /#{rows} + 1) pageNumber
+           FROM  (
+               SELECT  *
+                 FROM MEMBER
+                WHERE 1=1
+                <if test="searchId != null and searchId != ''">
+                   AND MEMBER_ID LIKE '%' || #{searchId} || '%' 
+               	</if>
+            	 ORDER BY seq ASC
+               ) a
+            ) b
+          WHERE  b.pageNumber = #{page}
+       order by b.rnum
+   </select>
+   
+   <select id ="selectJqgridListCnt" parameterType="adminMemberVO" resultType="egovMap">
+      SELECT  count(*) totalTotCnt
+             , CEIL(count(*) / #{rows}) totalPage
+        FROM  MEMBER
+       WHERE  1=1
+     ORDER BY  seq ASC
+   </select>
+   
+	<insert id="insertPlusPoint" parameterType="map">
+		<selectKey resultType="String" keyProperty="pointNumber" order="BEFORE">
+		SELECT MAX(POINT_NUMBER)+1 AS pointNumberNo
+		FROM POINT
+		</selectKey>
+		INSERT INTO POINT
+		(POINT_NUMBER,
+			POINT_TITLE,
+			POINT_DATE,
+			POINT_MILE,
+			MEMBER_NUMBER,
+			POINT_TOTALMILE)
+		VALUES
+		(#{pointNumber},
+		#{title},
+		TO_CHAR(SYSDATE, 'YYYYMMDD'),
+		+#{point},
+		#{memberNumber},
+		(SELECT a.POINT_TOTALMILE + #{point}
+			FROM (SELECT POINT_TOTALMILE,
+					ROWNUM subSeq
+					FROM POINT
+					WHERE MEMBER_NUMBER = #{memberNumber}
+    				ORDER BY subSeq DESC)a
+   			 WHERE subSeq = 1)
+   		)
+	</insert>
+
+	<insert id="insertMinusPoint" parameterType="map">
+		<selectKey resultType="String" keyProperty="pointNumber" order="BEFORE">
+		SELECT MAX(POINT_NUMBER)+1 AS pointNumberNo
+		FROM POINT
+		</selectKey>
+		INSERT INTO POINT
+		(POINT_NUMBER,
+			POINT_TITLE,
+			POINT_DATE,
+			POINT_MILE,
+			MEMBER_NUMBER,
+			POINT_TOTALMILE)
+		VALUES
+		(#{pointNumber},
+		#{title},
+		TO_CHAR(SYSDATE, 'YYYYMMDD'),
+		-#{point},
+		#{memberNumber},
+		(SELECT a.POINT_TOTALMILE -#{point}
+			FROM (SELECT POINT_TOTALMILE,
+					ROWNUM subSeq
+					FROM POINT
+					WHERE MEMBER_NUMBER = #{memberNumber}
+    				ORDER BY subSeq DESC)a
+   			 WHERE subSeq = 1)
+   		)
+	</insert>
+</mapper>

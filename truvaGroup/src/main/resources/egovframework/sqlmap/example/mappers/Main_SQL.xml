@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.main.service.impl.MainMapper">
+	
+	<!-- 코스 조회 -->
+	<select id="courseAllList" resultType="egovMap">
+		SELECT	*
+		FROM COURSE
+		ORDER BY SEQ
+	</select>
+	
+	<!-- 테마 조회 -->
+	<select id="themeList" resultType="egovMap">
+		SELECT	*
+		FROM THEME
+		WHERE THEME_YN = 'Y'
+		ORDER BY SEQ
+	</select>
+	
+	<insert id="insertCourseLike" parameterType="Map">
+		INSERT INTO 
+		WISHLIKE (MEMBER_NUMBER,
+				COURSE_NUMBER)
+		VALUES (#{memberNumber},
+				#{courseNumber})
+	</insert>
+	
+	<delete id="deleteCourseLike" parameterType="Map">
+		DELETE 
+		FROM WISHLIKE
+		WHERE MEMBER_NUMBER =  #{memberNumber}
+			  AND COURSE_NUMBER = #{courseNumber}
+	</delete>
+	
+	<!-- wishLise가져오기 -->
+	<select id="selectWishList" parameterType="Map" resultType="egovMap">
+		SELECT * FROM WISHLIKE
+		WHERE MEMBER_NUMBER = #{memberNumber}
+			  AND COURSE_NUMBER IN 
+				  <foreach collection="courseNumberList" item="item" open="(" close=")" separator=",">
+	              		#{item}
+	        	  </foreach>
+		ORDER BY COURSE_NUMBER
+	</select>
+	
+	<select id="reviewInfList" parameterType="String" resultType="egovMap">
+		SELECT COUNT(*) totCnt,
+			   AVG(REVIEW_RANK) rank
+		FROM REVIEW
+		WHERE COURSE_NUMBER = #{_parameter}
+		ORDER BY COURSE_NUMBER
+	</select>
+</mapper>

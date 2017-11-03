@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.myPage.service.impl.MyPageMapper">
+	
+	<!-- 마이페이지 메인 -->
+	<select id="selectMainPoint" parameterType="Map" resultType="egovMap">
+		SELECT aa.*
+				FROM (SELECT a.*,
+        				ROWNUM SEQ
+						FROM (SELECT POINT_TOTALMILE
+								FROM POINT
+								WHERE MEMBER_NUMBER = #{userId}
+       			ORDER BY ROWNUM DESC) a) aa
+        WHERE aa.SEQ = 1
+	</select>
+	<select id="selectMainAsk" parameterType="Map" resultType="egovMap">
+		SELECT aa.*
+				FROM (SELECT a.*,
+						ROWNUM SEQ
+						FROM (SELECT ASK_CONTENT,
+								ASK_ANSWER_YN,
+								ASK_NUMBER
+								FROM ASK
+								WHERE MEMBER_NUMBER = #{userId}
+						ORDER BY ROWNUM DESC) a) aa
+		WHERE aa.SEQ = 1
+	</select>
+	<select id="selectMainTotAsk" parameterType="Map" resultType="egovMap">
+		SELECT COUNT(*) TOTAL_ASK_COUNT
+				FROM ASK
+		WHERE MEMBER_NUMBER = #{userId}
+	</select>
+	<select id="selectMainAnswer" parameterType="Map" resultType="egovMap">
+		SELECT ANSWER_CONTENT
+				FROM ANSWER
+		WHERE ASK_NUMBER = #{askNumber}
+	</select>
+	<select id="selectMainTotOrder" parameterType="Map" resultType="egovMap">
+		SELECT COUNT(*) TOTAL_ORDER_COUNT
+			FROM (SELECT o.OR_NUMBER,
+					o.OR_DATE,
+					o.OR_PAYMENT,
+   					o.MEMBER_NUMBER,
+					r.PRODUCT_NUMBER
+					FROM ORDER_T o, RESERVATION r
+					WHERE r.RES_NUMBER = o.RES_NUMBER
+					ORDER BY o.OR_DATE ASC) a
+       	 	WHERE a.MEMBER_NUMBER = #{userId}
+	</select>
+	<select id="selectMainLike" parameterType="Map" resultType="egovMap">
+        SELECT count(*) TOTAL_LIKE_COUNT
+		FROM (SELECT a.*
+		FROM (SELECT w.MEMBER_NUMBER,
+           			c.COURSE_NUMBER,
+    				c.COURSE_TITLE,
+   					c.COURSE_SUBTITLE
+					FROM WISHLIKE w, COURSE c
+     		WHERE w.COURSE_NUMBER = c.COURSE_NUMBER) a
+     	WHERE a.MEMBER_NUMBER = #{userId}) aa
+	</select>
+	<select id="selectMyCourseList" parameterType="String" resultType="egovMap">
+		SELECT COURSE_NUMBER,
+				COURSE_TITLE,
+				COURSE_SUBTITLE
+				FROM COURSE
+		WHERE COURSE_NUMBER = #{_parameter}
+	</select>
+	
+	<!-- 내 주문내역 -->
+	<select id="selectMyOrderList" parameterType="Map" resultType="egovMap">
+		SELECT aaa.*,
+    	c.COURSE_TITLE
+		FROM (SELECT aa.*,
+    		p.DEPARTURE_TIME,
+   			p.COURSE_NUMBER
+			FROM (SELECT a.*
+				FROM (SELECT o.OR_NUMBER,
+					o.OR_DATE,
+					o.OR_PAYMENT,
+     				o.MEMBER_NUMBER,
+					r.PRODUCT_NUMBER
+					FROM ORDER_T o, RESERVATION r
+					WHERE r.RES_NUMBER = o.RES_NUMBER) a
+     			WHERE a.MEMBER_NUMBER = #{userId}) aa, PRODUCT p
+      		WHERE p.PRODUCT_NUMBER = aa.PRODUCT_NUMBER) aaa, COURSE c
+    	WHERE aaa.COURSE_NUMBER = c.COURSE_NUMBER
+		ORDER BY TO_DATE(aaa.OR_DATE) DESC
+	</select>
+	
+	<!-- 내 포인트 -->
+	<select id="selectMyPoint" parameterType="myPageVO" resultType="egovMap">
+		SELECT aa.*
+			FROM (SELECT a.*,
+				FLOOR ((a.SEQ - 1) / #{rows} + 1) pageNumber
+				FROM (SELECT POINT_TITLE,
+						POINT_DATE,
+						POINT_MILE,
+						MEMBER_NUMBER,
+						POINT_TOTALMILE,
+			      		ROWNUM SEQ
+						FROM POINT
+						WHERE MEMBER_NUMBER = #{userId}
+						ORDER BY POINT_DATE ASC) a) aa
+			WHERE aa.pageNumber = ${page}
+			ORDER BY TO_DATE(aa.POINT_DATE) DESC
+	</select>
+	<!-- 포인트 페이징 -->
+	<select id="myPointTotCnt" parameterType="myPageVO" resultType="egovMap">
+		SELECT count(*) TOTAL_CNT
+			, CEIL (count(*) / #{rows}) TOTAL_PAGE
+			FROM POINT
+		WHERE MEMBER_NUMBER = #{userId}
+	</select>
+	
+	<!-- 내 문의내역 -->
+	<select id="selectMyQuestion" parameterType="myPageVO" resultType="egovMap">
+		SELECT aa.*
+		FROM (SELECT a.*,
+				FLOOR ((a.SEQ - 1) / #{rows} + 1) pageNumber
+				FROM (SELECT ASK_NUMBER,
+						ASK_TITLE,
+						ASK_DATE,
+						ASK_ANSWER_YN,
+   				   		ROWNUM SEQ
+					FROM ASK
+     				WHERE MEMBER_NUMBER = #{userId}) a) aa
+		WHERE aa.pageNumber = #{page}
+		ORDER BY TO_DATE(aa.ASK_DATE) DESC
+	</select>
+	<!-- 문의내역 페이징 -->
+	<select id="myQuestionTotCnt" parameterType="myPageVO" resultType="egovMap">
+		SELECT count(*) TOTAL_CNT
+			, CEIL (count(*) / #{rows}) TOTAL_PAGE
+			FROM ASK
+		WHERE MEMBER_NUMBER = #{userId}
+	</select>
+	
+	<!-- 내 문의내역 상세보기 -->
+	<select id="selectShowMore" parameterType="String" resultType="egovMap">
+		SELECT ASK_TITLE,
+			ASK_NUMBER,
+            ASK_CONTENT,
+            ASK_DATE,
+			ASK_ANSWER_YN
+		FROM ASK
+     	WHERE ASK_NUMBER = #{_parameter}
+	</select>
+	<select id="selectAnswer" parameterType="String" resultType="egovMap">
+		SELECT ANSWER_CONTENT,
+			ANSWER_DATE,
+			ANSWER_TITLE
+		FROM ANSWER
+     	WHERE ASK_NUMBER = #{_parameter}
+	</select>
+	
+	<!-- 내정보 보기 -->
+	<select id="selectMyInfo" parameterType="Map" resultType="egovMap">
+		SELECT MEMBER_ID,
+			MEMBER_PW,
+			MEMBER_MAIL,
+			MEMBER_HPF || '-' || MEMBER_HPM || '-' || MEMBER_HPL AS PHONE
+		FROM MEMBER
+     	WHERE MEMBER_NUMBER = #{userId}
+	</select>
+	
+	<!-- 관심코스 보기 -->
+	<select id="selectGetMyFavorit" parameterType="Map" resultType="egovMap">
+		SELECT a.*
+		FROM (SELECT w.MEMBER_NUMBER,
+          		c.COURSE_NUMBER,
+   				c.COURSE_TITLE,
+  				c.COURSE_SUBTITLE
+				FROM WISHLIKE w, COURSE c
+    			WHERE w.COURSE_NUMBER = c.COURSE_NUMBER
+				ORDER BY COURSE_NUMBER ASC) a
+     	WHERE a.MEMBER_NUMBER = #{userId}
+	</select>
+	<select id="selectGetReview" parameterType="Map" resultType="egovMap">
+		SELECT COUNT(*) AS TOT_CNT,
+			ROUND(AVG(REVIEW_RANK)) AS RANK
+		FROM REVIEW
+     	WHERE COURSE_NUMBER = #{_parameter}
+	</select>
+	
+	<delete id="deletFavoritList" parameterType="Map">
+		DELETE 
+			FROM WISHLIKE
+			WHERE MEMBER_NUMBER = #{userId}
+			AND COURSE_NUMBER = #{cosNum}
+	</delete>
+
+</mapper>

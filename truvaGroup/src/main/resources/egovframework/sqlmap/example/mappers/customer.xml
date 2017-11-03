@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.customer.service.impl.CustomerMapper">
+
+	<select id ="selectNoticeList" parameterType="customerVO"  resultType="egovMap">
+		SELECT b.* FROM
+		  (SELECT a.*,
+		        FLOOR( (a.rnum - 1) / #{rows} + 1) pageNumber
+		  FROM (SELECT aa.*,
+		          ROWNUM rnum
+		      	  FROM (SELECT BOARD_NUMBER,
+								BOARD_TITLE,
+								BOARD_DATE,
+								SEQ,
+								COUNT
+							FROM BOARD
+							ORDER BY SEQ) aa
+		      ORDER BY rnum ASC) a
+		  ) b
+		WHERE pageNumber = #{page}
+		ORDER BY b.rnum ASC
+	</select>
+
+
+	<!-- courseCount -->
+	<select id="noticeListCnt" parameterType="customerVO" resultType="egovMap">
+		SELECT count(*) TOTAL_TOT_CNT,
+	        CEIL(count(*) / #{rows}) TOTAL_PAGE
+		FROM BOARD
+	</select>
+	
+	<select id ="noticeDetail" parameterType="String"  resultType="egovMap">
+		SELECT *
+		FROM BOARD
+		WHERE BOARD_NUMBER = #{_parameter}
+	</select>
+	
+	
+	<select id ="selectFaqList" parameterType="customerVO" resultType="egovMap">
+		 SELECT  * 
+         FROM  FAQ
+         ORDER BY FAQ_NUMBER
+	</select>
+	
+	<select id ="selectManToManList"  resultType="egovMap">
+		 SELECT  * 
+         FROM  BOARD
+         WHERE BOARD_CLASS ='3'
+         ORDER BY BOARD_ORDER
+	</select>
+	
+	<select id ="selectManToManDetail" parameterType="Map" resultType="egovMap">
+		 SELECT  * 
+         FROM  BOARD
+         WHERE BOARD_CLASS ='3'
+         <if test='boardNumber != null and boardNumber != ""'>
+			AND BOARD_NUMBER = #{boardNumber}
+		</if>
+         ORDER BY BOARD_NUMBER
+	</select>
+	
+	<select id ="faqTypeCnt" resultType="egovMap">
+		 SELECT DISTINCT(FAQ_TYPE), count(*) cnt FROM FAQ GROUP BY FAQ_TYPE ORDER BY COUNT(*) DESC
+	</select>
+
+	<select id ="faqTotCnt" resultType="egovMap">
+		 SELECT count(*) totCnt FROM FAQ
+	</select>
+	
+	<update id="updateCount" parameterType="String">
+		UPDATE BOARD
+		SET COUNT = NVL(COUNT, 0) + 1
+		WHERE 1=1
+		<if test="_parameter != '' and _parameter != null">
+			AND BOARD_NUMBER = #{_parameter}
+		</if>
+	</update>
+	
+	<insert id="insertAsk" parameterType="Map">
+		<selectKey resultType="String" keyProperty="seq" order="BEFORE">
+			SELECT NVL(MAX(SEQ),0)+1 AS seq
+			FROM ASK
+		</selectKey>
+		INSERT 
+		INTO ASK(ASK_NUMBER,
+					ASK_TITLE,
+					ASK_DATE,
+					ASK_CONTENT,
+					MEMBER_NUMBER,
+					SEQ)
+		VALUES (#{seq},
+				#{title},
+				SYSDATE,
+				#{contents},
+				#{memberNumber},
+				#{seq}
+				)
+	</insert>
+	
+</mapper>

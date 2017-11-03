@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.left.service.impl.LeftMapper">
+
+	<select id ="menuList" parameterType="String" resultType="egovMap">
+      SELECT   MENU_ID 
+           , MENU_NM
+           , MENU_URL
+           , COLLAPSE_YN
+           , USE_YN
+           , SORT_NO
+           , DEPTH
+           , PARENT_ID
+           , DIRECTIONS
+      FROM TRUVA_MENU
+      WHERE 1 = 1 
+         AND USE_YN ='Y'
+         <choose>
+         	<when test='_parameter == ""'>
+         		AND DEPTH = 1
+         	</when>
+         	<otherwise>
+         	    AND PARENT_ID = #{_parameter}
+         	</otherwise>
+         </choose>
+      ORDER BY SORT_NO
+   </select>
+
+	<select id ="adminMenuList" parameterType="String" resultType="egovMap">
+      SELECT   MENU_ID 
+           , MENU_NM
+           , MENU_URL
+           , MENU_CLASS
+           , USE_YN
+           , SORT_NO
+           , COLLAPSE_YN
+           , DEPTH
+           , PARENT_ID
+      FROM TRUVA_ADMINMENU
+      WHERE 1 = 1 
+         AND USE_YN ='Y'
+         <choose>
+         	<when test="_parameter !=null and _parameter !=''">
+         		AND DEPTH = 2
+         	    AND PARENT_ID = #{_parameter}
+         	</when>
+         	<otherwise>
+         		AND DEPTH = 1
+         	</otherwise>
+         </choose>
+      ORDER BY SORT_NO
+   </select>
+</mapper>

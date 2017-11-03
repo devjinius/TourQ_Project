@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.reservation.service.impl.ReservationMapper">
+	
+	<!-- 페이지 로딩시 기본정보 셀렉트  -->
+	<select id="getSelectTemaList" resultType="egovMap">
+		SELECT THEME_NUMBER,
+			THEME_NAME,
+			THEME_TYPE,
+			THEME_YN,
+			SEQ
+		FROM THEME
+		WHERE 1=1
+		AND THEME_YN = 'Y'
+		ORDER BY SEQ
+	</select>
+	<select id="getSelectPayList" resultType="egovMap">
+		SELECT PAY_NUMBER,
+			PAY_TYPE,
+			PAY_IMG,
+			PAY_NAME,
+			PAY_USEYN,
+			BANK_NUMBER,
+			PAY_SORTNUM
+		FROM PAY
+		WHERE 1=1
+		AND PAY_USEYN = 'Y'
+		ORDER BY PAY_SORTNUM
+	</select>
+	<select id ="selectMyPoint" parameterType="String" resultType="egovMap">
+		 SELECT a.POINT_TOTALMILE
+         FROM ( SELECT MEMBER_NUMBER,
+				POINT_TOTALMILE
+         	FROM  POINT
+         	WHERE 1=1
+	         <if test="_parameter != null and _parameter != ''">
+				AND MEMBER_NUMBER = #{_parameter}
+			</if>
+         ORDER BY POINT_NUMBER DESC)a
+         WHERE ROWNUM = 1
+	</select>
+	
+	<!-- 예약 및 주문정보 저장 -->
+	<insert id="saveReservation" parameterType="reservationVO">
+		<selectKey resultType="long" keyProperty="seq" order="BEFORE">
+		SELECT NVL(MAX(SEQ),0)+1 AS seqNo
+		FROM RESERVATION
+		</selectKey>
+		INSERT INTO RESERVATION
+		(RES_NUMBER,
+			RES_TYPE,
+			RES_SEAT,
+			RES_DATE,
+			RES_NAME,
+			RES_COUNT,
+			RES_PHONE,
+			RES_EMAIL,
+			PRODUCT_NUMBER,
+			SEQ)
+		VALUES
+		('RSN'||TO_CHAR(LPAD(#{seq}, 8, 0)),
+		#{resType},
+		#{resSeat},
+		TO_CHAR(SYSDATE, 'YYYYMMDD'),
+		#{resName},
+		#{resCount},
+		#{resPhone},
+		#{resEmail},
+		#{productNumber},
+		#{seq})
+	</insert>
+	<insert id="saveOrder" parameterType="reservationVO">
+		<selectKey resultType="String" keyProperty="resNumber" order="BEFORE">
+		SELECT MAX(RES_NUMBER)AS resNumberNo
+		FROM RESERVATION
+		</selectKey>
+		INSERT INTO ORDER_T
+		(OR_NUMBER,
+			OR_MEMBER_YN,
+			MEMBER_NUMBER,
+			OR_NAME,
+			OR_KIND,
+			OR_PHONE,
+			OR_EMAIL,
+			OR_USE_POINT,
+			OR_DISCONT,
+			OR_PRICE,
+			OR_PAYMENT,
+			OR_KINDINFO,
+			OR_DATE,
+			OR_CHECK_REVIEW,
+			COUPON_PUB_NUMBER,
+			RES_NUMBER)
+		VALUES
+		('ON'||TO_CHAR(SYSTIMESTAMP, 'YYYYMMDDHH24MISSFF3'),
+		#{memberYn},
+		#{memberNumber},
+		#{orderName},
+		#{orderKind},
+		#{orderPhone},
+		#{orderEmail},
+		TO_NUMBER(#{usePoint}),
+		#{discount},
+		#{price},
+		#{payment},
+		#{kindInfo},
+		SYSDATE,
+		#{reviewYn},
+		#{couponNumber,jdbcType=VARCHAR},
+		#{resNumber})
+	</insert>
+	<update id="updateProd" parameterType="reservationVO">
+		UPDATE PRODUCT
+		SET PERSON = #{resCount}
+		WHERE PRODUCT_NUMBER = #{productNumber}
+	</update>
+	<insert id="useMyPoint" parameterType="reservationVO">
+		<selectKey resultType="String" keyProperty="pointNumber" order="BEFORE">
+		SELECT MAX(POINT_NUMBER)+1 AS pointNumberNo
+		FROM POINT
+		</selectKey>
+		INSERT INTO POINT
+		(POINT_NUMBER,
+			POINT_TITLE,
+			POINT_DATE,
+			POINT_MILE,
+			MEMBER_NUMBER,
+			POINT_TOTALMILE)
+		VALUES
+		(TO_CHAR(#{pointNumber}),
+		'주문시 사용',
+		TO_CHAR(SYSDATE, 'YYYYMMDD'),
+		-#{usePoint},
+		#{memberNumber},
+		(SELECT a.POINT_TOTALMILE
+			FROM (SELECT POINT_TOTALMILE,
+					ROWNUM subSeq
+					FROM POINT
+					WHERE MEMBER_NUMBER = 2
+    				ORDER BY subSeq DESC)a
+   			 WHERE ROWNUM = 1)-#{usePoint})
+	</insert>
+	<update id="updateSeat" parameterType="reservationVO">
+		UPDATE PRODUCT
+		SET RES_SEAT = #{resSeat}
+		WHERE PRODUCT_NUMBER = #{productNumber}
+	</update>
+	<update id="useCoupon" parameterType="reservationVO">
+		UPDATE COUPON
+		SET COUPON_PUB_COUNT = COUPON_PUB_COUNT-1
+		WHERE COUPON_PUB_NUMBER = #{couponNumber}
+	</update>
+	
+	<!-- 기존 예약된 좌석정보를 가져옴 -->
+	<select id ="getSeatInfo" parameterType="String" resultType="egovMap">
+		 SELECT RES_SEAT
+         FROM  PRODUCT
+         WHERE PRODUCT_NUMBER = #{_parameter}
+	</select>
+	
+	<!-- 사용할 쿠폰정보 셀렉트 -->
+	<select id ="getSelectCoupon" parameterType="String" resultType="egovMap">
+		 SELECT COUPON_PUB_NUMBER,
+		 COUPON_NAME,
+		 COUPON_DISCOUNT,
+		 COUPON_PUB_COUNT
+         FROM  COUPON
+         WHERE 1=1
+         <if test="_parameter != null and _parameter != ''">
+			AND COUPON_PUB_NUMBER = #{_parameter}
+			AND COUPON_YN = 'Y'
+			AND COUPON_PUB_COUNT > 1
+		</if>
+	</select>
+	
+	<!-- 예약 완료 페이지에 들어갈 내용 셀렉트 -->
+	<select id ="resInfo" parameterType="reservationVO" resultType="egovMap">
+		 SELECT r.RES_NUMBER,
+		 r.RES_NAME,
+		 r.RES_COUNT,
+		 o.RES_NUMBER,
+		 o.OR_NUMBER,
+		 o.OR_PAYMENT,
+		 o.OR_KIND,
+		 o.OR_KINDINFO,
+		 o.OR_DATE,
+		 o.OR_PRICE,
+		 p.COURSE_NUMBER,
+		 c.COURSE_TITLE
+         FROM  RESERVATION r, ORDER_T o, PRODUCT p, COURSE c
+         WHERE r.RES_NUMBER = o.RES_NUMBER
+         AND r.PRODUCT_NUMBER = p.PRODUCT_NUMBER
+         AND p.COURSE_NUMBER = c.COURSE_NUMBER
+         <if test="resNumber != null and resNumber != ''">
+         	AND r.RES_NUMBER = #{resNumber}
+		</if>
+	</select>
+	
+	<!-- 사용할 쿠폰정보 셀렉트 -->
+	<select id ="getProductList" parameterType="Map" resultType="egovMap">
+		 SELECT a.*, t.THEME_NAME
+         FROM  (
+         	SELECT p.PRODUCT_NUMBER,
+				 p.DEPARTURE_DAY,
+				 p.DEPARTURE_TIME,
+				 p.TOTAL_PERSON - p.PERSON AS RES_PERSON,
+				 c.THEME_NUMBER,
+				 c.COURSE_TITLE,
+				 c.COURSE_PRICE,
+				 c.COURSE_STATUS,
+				 c.COURSE_DETAIL
+	         FROM  PRODUCT p, COURSE c
+	         WHERE p.COURSE_NUMBER = c.COURSE_NUMBER)a, THEME t
+         WHERE a.THEME_NUMBER = t.THEME_NUMBER
+         <if test="reserveDate != null and reserveDate != ''">
+			AND a.DEPARTURE_DAY = TO_DATE(#{reserveDate},'YYYY-MM-DD')
+		</if>
+         <if test="endTime != null and endTime != ''">
+			AND a.DEPARTURE_TIME BETWEEN TO_DATE(#{reserveDate}||#{startTime},'YYYY-MM-DD HH24:MI') AND TO_DATE(#{reserveDate}||#{endTime},'YYYY-MM-DD HH24:MI')
+		</if>
+         <if test="startTema != null and startTema != '' and startTema != 'All'">
+			AND t.THEME_NAME = #{startTema}
+		</if>
+	</select>
+	
+	<!-- 좌석정보를 가져오는 셀렉트 -->
+	<select id ="selectGetBusSeat" parameterType="String" resultType="egovMap">
+		 SELECT p.PRODUCT_NUMBER,
+				p.RES_SEAT,
+		    	c.BUS_NO,
+		    	b.SEAT
+				FROM PRODUCT p, COURSE c, BUS b
+          WHERE p.COURSE_NUMBER = c.COURSE_NUMBER
+          AND c.BUS_NO = b.BUS_NO
+          AND p.PRODUCT_NUMBER = #{_parameter}
+	</select>
+	
+</mapper>

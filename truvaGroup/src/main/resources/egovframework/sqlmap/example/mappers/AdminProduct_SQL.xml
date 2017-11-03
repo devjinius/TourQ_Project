@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.adminProduct.service.impl.AdminProductMapper">
+	
+	<!-- 메인 조회 -->
+	<select id="selectGetCosList" resultType="egovMap">
+		SELECT COURSE_TITLE,
+			COURSE_NUMBER,
+			COURSE_STATUS
+		FROM COURSE
+	</select>
+	
+	<!-- 메인 조회 -->
+	<select id="jqgridAdminProList" parameterType="adminProductVO" resultType="egovMap">
+		SELECT aa.*
+		FROM (SELECT a.*,
+				FLOOR ((a.subSeq - 1) / #{rows} + 1) pageNumBer
+			FROM (SELECT p.PRODUCT_NUMBER,
+	    		p.DEPARTURE_DAY,
+	    		p.DEPARTURE_TIME,
+	    		p.TOTAL_PERSON,
+	    		p.PERSON,
+	    		p.PRODUCT_DATE,
+	    		p.COURSE_NUMBER,
+	    		c.COURSE_TITLE,
+	    		c.COURSE_STATUS,
+			    ROWNUM subSeq
+			FROM PRODUCT p, COURSE c
+     		WHERE p.COURSE_NUMBER = c.COURSE_NUMBER
+     		<if test="couseNumber != null and couseNumber != ''">
+     			AND p.COURSE_NUMBER = #{couseNumber}
+     		</if>
+     		) a)aa
+    	WHERE aa.pageNumBer = #{page}
+		ORDER BY aa.DEPARTURE_DAY ASC
+	</select>
+	
+	<!-- 페이징 -->
+	<select id="selectAdminProdCnt" parameterType="adminProductVO" resultType="egovMap">
+		SELECT count(*) TOTAL_CNT
+			, CEIL (count(*) / #{rows}) TOTAL_PAGE
+			FROM PRODUCT
+		WHERE 1=1
+		<if test="couseNumber != null and couseNumber != ''">
+			AND COURSE_NUMBER = #{couseNumber}
+		</if>
+	</select>
+	
+	<!-- 코스넘버 가져오기 -->
+	<select id="selectGetCosNum" parameterType="Map" resultType="egovMap">
+		SELECT a.*
+		FROM (SELECT COURSE_NUMBER,
+				COURSE_TITLE
+				FROM COURSE
+		     	WHERE COURSE_STATUS = #{gubun}) a
+			WHERE COURSE_TITLE = #{productName}
+	</select>
+	
+	<!-- 상품 저장 -->
+	<insert id="saveAdminProduct" parameterType="Map">
+		<selectKey resultType="String" keyProperty="proNum" order="BEFORE">
+			SELECT NVL(MAX(SEQ),0)+1 AS seqNo
+			FROM PRODUCT
+		</selectKey>
+		INSERT INTO PRODUCT (
+			PRODUCT_NUMBER,
+			DEPARTURE_DAY,
+			DEPARTURE_TIME,
+			TOTAL_PERSON,
+			PERSON,
+			PRODUCT_DATE,
+			COURSE_NUMBER,
+			SEQ)
+		VALUES(
+	      'PROD'||TO_CHAR(LPAD(#{proNum}, 5, 0)),
+	      TO_DATE(#{productStartDay},'YYYY-MM-DD'),
+	      TO_DATE(#{productStartDay}||#{productTime},'YYYY-MM-DD'||'HH24:MI'),
+	      #{productPeople},
+	      0,
+	      TO_DATE(SYSDATE,'YYYY-MM-DD'),
+	      #{courseNumber},
+	      #{proNum})
+	</insert>
+	
+	<!-- 상품 시간 가져오기 -->
+	<select id="selectGetTime" parameterType="Map" resultType="egovMap">
+		SELECT a.*
+		FROM (SELECT COURSE_START_TIME,
+					COURSE_TITLE
+					FROM COURSE
+		     		WHERE COURSE_STATUS = #{courseGubun}) a
+			WHERE COURSE_TITLE = #{courseName}
+	</select>
+	<!-- 버스일경우 토달 인원 가져오기 -->
+	<select id="selectGetTotal" parameterType="Map" resultType="egovMap">
+		SELECT aa.*,
+			b.BUS_SITCOUNT
+		FROM (SELECT a.*
+				FROM (SELECT BUS_NO,
+							COURSE_TITLE
+							FROM COURSE
+				     		WHERE COURSE_STATUS = #{courseGubun}) a
+					WHERE COURSE_TITLE = #{courseName}) aa, BUS b
+			WHERE aa.BUS_NO = b.BUS_NO
+	</select>
+	
+	<!-- 상품 삭제 -->
+	<delete id="deletAdminProduct" parameterType="String">
+		DELETE FROM PRODUCT
+     	WHERE PRODUCT_NUMBER = #{_parameter}
+	</delete>
+	
+	<!-- 버스 좌석정보 가져오기 -->
+	<select id="selectGetBusSeat" parameterType="String" resultType="egovMap">
+		SELECT p.PRODUCT_NUMBER,
+				p.RES_SEAT,
+		    	c.BUS_NO,
+		    	b.SEAT
+				FROM PRODUCT p, COURSE c, BUS b
+          WHERE p.COURSE_NUMBER = c.COURSE_NUMBER
+          AND c.BUS_NO = b.BUS_NO
+          AND p.PRODUCT_NUMBER = #{_parameter}
+	</select>
+</mapper>

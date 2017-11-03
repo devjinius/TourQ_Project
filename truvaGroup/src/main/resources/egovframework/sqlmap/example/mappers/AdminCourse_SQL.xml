@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.adminCourse.service.impl.AdminCourseMapper">
+	
+	<!-- 코스 조회 -->
+	<select id="courseList" parameterType="String" resultType="egovMap">
+		SELECT	c.*
+		FROM COURSE c, THEME t
+		WHERE 1=1
+			AND c.THEME_NUMBER = t.THEME_NUMBER
+		<if test="_parameter != '' and _parameter != null">
+			AND c.COURSE_NUMBER = #{_parameter}
+		</if>
+		ORDER BY c.SEQ
+	</select>
+	
+	<select id="courseListVO" parameterType="courseVo" resultType="egovMap">
+		SELECT b.* FROM
+		  (SELECT a.*,
+		        FLOOR( (a.rnum - 1) / #{rows} + 1) pageNumber
+		  FROM (SELECT aa.*,
+		          ROWNUM rnum
+		      	  FROM (SELECT	c.*, t.THEME_NAME
+						FROM COURSE c, THEME t
+						WHERE 1=1
+							AND c.THEME_NUMBER = t.THEME_NUMBER
+						<if test="searchTheme != '' and searchTheme != null">
+							AND c.THEME_NUMBER = #{searchTheme}
+						</if>
+						<if test="searchName != '' and searchName != null">
+							AND c.COURSE_TITLE LIKE  '%' || #{searchName} || '%'
+						</if>
+						ORDER BY c.SEQ) aa
+		      ORDER BY rnum ASC) a
+		  ) b
+		WHERE pageNumber = #{page}
+		ORDER BY b.rnum ASC
+	</select>
+	
+	<!-- courseCount -->
+	<select id="courseListCnt" parameterType="courseVo" resultType="egovMap">
+		SELECT count(*) TOTAL_TOT_CNT,
+	        CEIL(count(*) / #{rows}) TOTAL_PAGE
+		FROM COURSE c, THEME t
+		WHERE 1=1
+			AND c.THEME_NUMBER = t.THEME_NUMBER
+		<if test="searchTheme != '' and searchTheme != null">
+			AND c.THEME_NUMBER = #{searchTheme}
+		</if>
+		<if test="searchName != '' and searchName != null">
+			AND c.COURSE_TITLE LIKE  '%' || #{searchName} || '%'
+		</if>
+		ORDER BY c.SEQ ASC
+	</select>
+	
+	<select id="markerList" parameterType="String" resultType="egovMap">
+		SELECT	*
+		FROM MARKER
+		WHERE 1=1
+		<if test="_parameter != ''">
+			AND COURSE_NUMBER = #{_parameter}
+		</if>
+		ORDER BY SEQ
+	</select>
+	
+	<insert id="courseDetailInsert" parameterType="courseVo">
+		<selectKey resultType="String" keyProperty="seq" order="BEFORE">
+			SELECT NVL(MAX(SEQ),0)+1 AS seq
+			FROM COURSE
+		</selectKey>
+			INSERT INTO COURSE
+				(COURSE_NUMBER,
+				COURSE_STATUS,
+				COURSE_TITLE,
+				COURSE_SUBTITLE,
+				COURSE_PRICE,
+				COURSE_CONTENTS,
+				COURSE_DETAIL,
+				COURSE_TIME,
+				POPULAR,
+				RECOMMAND,
+				COURSE_PLACE,
+				COURSE_DATE,
+				BUS_NO,
+				THEME_NUMBER,
+				COURSE_START_TIME,
+				SEQ
+				)
+			VALUES
+				(#{seq},
+				#{status},
+				#{title},
+				#{subtitle},
+				#{price},
+				#{contents},
+				#{detail},
+				#{time},
+				'N',
+				'N',
+				#{place},
+				SYSDATE,
+				#{bus},
+				#{theme},
+				#{startTime},
+				#{seq})
+	</insert>
+	
+	<update id="courseDetailUpdate" parameterType="courseVo">
+		UPDATE COURSE 
+		SET COURSE_STATUS = #{status},
+			COURSE_TITLE = #{title},
+			COURSE_SUBTITLE = #{subtitle},
+			COURSE_PRICE = #{price},
+			COURSE_CONTENTS = #{contents},
+			COURSE_DETAIL = #{detail},
+			COURSE_TIME = #{time},
+			COURSE_PLACE = #{place},
+			BUS_NO = #{bus},
+			THEME_NUMBER = #{theme},
+			COURSE_START_TIME = #{startTime}
+		WHERE COURSE_NUMBER = #{courseNumber}
+	</update>
+
+	<select id="themeList" resultType="egovMap">
+		SELECT	THEME_NUMBER,
+			THEME_NAME,
+			THEME_TYPE,
+			THEME_YN,
+			SEQ
+		FROM THEME
+		ORDER BY SEQ
+	</select>
+	
+	<select id="themeCount" resultType="egovMap">
+		SELECT c.THEME_NUMBER, count(*) COURSE_COUNT
+		FROM COURSE c
+		WHERE c.THEME_NUMBER IN
+			(SELECT THEME.THEME_NUMBER
+			FROM THEME)
+		GROUP BY c.THEME_NUMBER
+		ORDER BY c.THEME_NUMBER
+	</select>
+
+	<select id="busList" resultType="egovMap">
+		SELECT BUS_NO, BUS_NAME
+		FROM BUS
+	</select>
+	
+	<insert id="insertTheme" parameterType="Map">
+		<selectKey resultType="String" keyProperty="seq" order="BEFORE">
+			SELECT NVL(MAX(SEQ),0)+1 AS seq
+			FROM THEME
+		</selectKey>
+			INSERT INTO THEME
+				(THEME_NUMBER,
+				THEME_NAME,
+				THEME_TYPE,
+				THEME_YN,
+				SEQ
+				)
+			VALUES
+				(#{seq},
+				#{themeTitle},
+				#{themeType},
+				'Y',
+				#{seq}
+				)
+	</insert>
+	
+	<select id="selectPYN" parameterType="String" resultType="egovMap">
+		SELECT POPULAR
+		FROM COURSE
+		WHERE COURSE_NUMBER = #{_parameter}
+	</select>
+
+	<update id="updatePY" parameterType="String">
+		UPDATE COURSE 
+		SET POPULAR = 'N'
+		WHERE COURSE_NUMBER = #{_parameter}
+	</update>
+	
+	<update id="updatePN" parameterType="String">
+		UPDATE COURSE 
+		SET POPULAR = 'Y'
+		WHERE COURSE_NUMBER = #{_parameter}
+	</update>
+	
+	<select id="selectRYN" parameterType="String" resultType="egovMap">
+		SELECT RECOMMAND
+		FROM COURSE
+		WHERE COURSE_NUMBER = #{_parameter}
+	</select>
+
+	<update id="updateRY" parameterType="String">
+		UPDATE COURSE 
+		SET RECOMMAND = 'N'
+		WHERE COURSE_NUMBER = #{_parameter}
+	</update>
+	
+	<update id="updateRN" parameterType="String">
+		UPDATE COURSE 
+		SET RECOMMAND = 'Y'
+		WHERE COURSE_NUMBER = #{_parameter}
+	</update>
+	
+	<delete id="deleteCourse" parameterType="String">
+		DELETE FROM COURSE 
+		WHERE COURSE_NUMBER = #{_parameter}
+	</delete>
+	
+	<delete id="deleteTheme" parameterType="String">
+		DELETE FROM THEME 
+		WHERE THEME_NUMBER = #{_parameter}
+	</delete>
+	
+	<select id="selectRCourse" resultType="egovMap">
+		SELECT count(*) count
+		FROM COURSE
+		WHERE RECOMMAND = 'Y'
+	</select>
+	
+	<select id="selectCourseNumber" resultType="egovMap">
+		SELECT NVL(MAX(SEQ),0) AS seq
+			FROM COURSE
+	</select>
+</mapper>
